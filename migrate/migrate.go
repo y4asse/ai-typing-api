@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"example.com/hello/db"
-	"example.com/hello/model"
+	"ai-typing/db"
+	"ai-typing/model"
 )
 
 func main() {
