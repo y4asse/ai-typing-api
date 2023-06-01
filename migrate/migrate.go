@@ -12,5 +12,5 @@ func main() {
 	dbConnection := db.NewDB()
 	defer fmt.Println("Successfully Migrated!!!!!")
 	defer db.CloseDB(dbConnection)
-	dbConnection.AutoMigrate(&model.User{})
+	dbConnection.AutoMigrate(&model.User{}, &model.Comment{}, &model.CreatedText{}, &model.Difficulty{}, &model.Game{}, &model.Like{}, &model.PostedText{})
 }

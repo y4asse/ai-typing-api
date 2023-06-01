@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	ID           uint      `json:"id" gorm:"primaryKey"`
+	ID           string    `json:"id" gorm:"primaryKey"`
 	Name         string    `json:"name"`
 	UserId       string    `json:"user_id"`
 	TotalScore   int       `json:"total_score"`
@@ -16,8 +16,8 @@ type User struct {
 }
 
 type UserResponse struct {
-	ID           uint      `json:"id" gorm:"primaryKey"`
-	Name         string    `json:"name"`
-	TotalScore   int       `json:"total_score"`
-	Email        string    `json:"email" gorm:"unique"`
+	ID         string `json:"id" gorm:"primaryKey"`
+	Name       string `json:"name"`
+	TotalScore int    `json:"total_score"`
+	Email      string `json:"email" gorm:"unique"`
 }
