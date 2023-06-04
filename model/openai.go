@@ -6,7 +6,7 @@ type Message struct {
 }
 
 type AiTextResponse struct {
-	Text string `json:"text"`
+	Text []string `json:"text"`
 }
 
 type OpenaiResponse struct {

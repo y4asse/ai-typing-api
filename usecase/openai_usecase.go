@@ -24,7 +24,7 @@ func NewOpenaiUsecase() IOpenaiUsecase {
 func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
 	method := "POST"
 	url := "https://api.openai.com/v1/chat/completions"
-	payload := strings.NewReader(`{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "` + thema + `"}]}`)
+	payload := strings.NewReader(`{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "` + thema + `について5つ文章を考えて{1:文章, 2:文章...}のjson形式で教えて"}]}`)
 	API_KEY := os.Getenv("API_KEY")
 	req, err := http.NewRequest(method, url, payload)
 	if err != nil {
@@ -49,13 +49,38 @@ func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
 	data := model.OpenaiResponse{}
 	if err := json.Unmarshal(body, &data); err != nil {
 		fmt.Println("デシリアライズに失敗しました", err)
+		return model.AiTextResponse{}, err
 	}
+
+	//message={"1": "aaa", "2": "bbb"...}
 	message := data.Choices[0].Message.Content
-	fmt.Println("message:", message)
-	//TODOmessageを分割する
+	fmt.Println(message)
+	message = strings.Replace(message, "『", "", -1)
+	message = strings.Replace(message, "』", "", -1)
+	message = strings.Replace(message, "「", "", -1)
+	message = strings.Replace(message, "」", "", -1)
+	message = strings.Replace(message, "{", "", 1)
+	message = strings.Replace(message, "}", "", 1)
+	message = strings.Replace(message, "\n", "", -1)
+	message = strings.Replace(message, `"`, "", -1)
+	message = strings.Replace(message, `]`, "", -1)
+	message = strings.Replace(message, `[`, "", -1)
+	message = strings.Replace(message, ` `, "", -1)
+	messages := strings.Split(message, ",")
+
+	var resMessages []string
+	for _, message := range messages {
+		if !strings.Contains(message, ":") {
+			fmt.Println("AIが作成したテキストに問題があります")
+			return model.AiTextResponse{}, fmt.Errorf("AIが作成したテキストに問題があります")
+		}
+		resMessages = append(resMessages, strings.Split(message, ":")[1])
+	}
+	fmt.Println(resMessages)
 
 	resAiText := model.AiTextResponse{
-		Text: message,
+		Text: resMessages,
 	}
+
 	return resAiText, nil
 }
