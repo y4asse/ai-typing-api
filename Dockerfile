@@ -9,4 +9,4 @@ RUN go build -o /server
 
 EXPOSE ${PORT}
 
-CMD [ "/server" ]
+CMD [ "go" , "run", "main.go" ]
