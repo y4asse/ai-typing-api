@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"example.com/hello/db"
-	"example.com/hello/model"
+	"ai-typing/db"
+	"ai-typing/model"
 )
 
 func main() {
@@ -12,5 +12,5 @@ func main() {
 	dbConnection := db.NewDB()
 	defer fmt.Println("Successfully Migrated!!!!!")
 	defer db.CloseDB(dbConnection)
-	dbConnection.AutoMigrate(&model.User{})
+	dbConnection.AutoMigrate(&model.User{}, &model.Comment{}, &model.CreatedText{}, &model.Difficulty{}, &model.Game{}, &model.Like{}, &model.PostedText{})
 }
