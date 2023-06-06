@@ -6,6 +6,7 @@ import (
 	"ai-typing/db"
 	"ai-typing/router"
 	"ai-typing/usecase"
+	"os"
 )
 
 func main() {
@@ -13,5 +14,5 @@ func main() {
 	openaiUsecase := usecase.NewOpenaiUsecase()
 	openaiController := controller.NewOpenaiController(openaiUsecase)
 	e := router.NewRouter(openaiController)
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
