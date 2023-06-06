@@ -16,6 +16,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=dev-postgres
       - API_KEY=${API_KEY}
+      - CLIENT_ID=${CLIENT_ID}
     volumes:
       - ./:/app
   dev-postgres:
