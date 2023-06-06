@@ -3,14 +3,14 @@ package main
 
 import (
 	"ai-typing/controller"
-	"ai-typing/db"
+	// "ai-typing/db"
 	"ai-typing/router"
 	"ai-typing/usecase"
 	"os"
 )
 
 func main() {
-	db.NewDB()
+	// db.NewDB()
 	openaiUsecase := usecase.NewOpenaiUsecase()
 	openaiController := controller.NewOpenaiController(openaiUsecase)
 	e := router.NewRouter(openaiController)
