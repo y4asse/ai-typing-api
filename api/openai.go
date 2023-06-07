@@ -16,6 +16,11 @@ func CreateAiText(thema string) (string, error) {
 	OPEN_AI_URL := "https://api.openai.com/v1/chat/completions"
 	payload := strings.NewReader(`{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "` + thema + `について5つ文章を考えて{1:文章, 2:文章...}のjson形式で教えて"}]}`)
 	API_KEY := os.Getenv("API_KEY")
+	if API_KEY == "" {
+		fmt.Println("API_KEYを設定してください")
+		return "", fmt.Errorf("API_KEYを設定してください")
+	}
+
 	req, err := http.NewRequest(method, OPEN_AI_URL, payload)
 	if err != nil {
 		fmt.Println("リクエストの作成に失敗しました:", err)
@@ -42,6 +47,10 @@ func CreateAiText(thema string) (string, error) {
 		return "", err
 	}
 
+	if data.Choices == nil {
+		fmt.Println("Open AIからのレスポンスに問題があります")
+		return "", fmt.Errorf("OpenAi空のレスポンスに問題があります")
+	}
 	message := data.Choices[0].Message.Content
 	fmt.Println(message)
 	message = strings.Replace(message, "『", "", -1)

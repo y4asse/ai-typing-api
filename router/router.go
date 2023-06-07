@@ -9,9 +9,7 @@ import (
 
 func NewRouter(oc controller.IOpenaiController) *echo.Echo {
 	e := echo.New()
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
-	}))
+	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 	e.POST("/aiText", oc.GetAiText)
 	return e
 }
