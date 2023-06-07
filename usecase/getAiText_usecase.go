@@ -33,14 +33,14 @@ func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
 	textArr := strings.Split(text, ",")
 	for i, text := range textArr {
 		if !strings.Contains(text, ":") {
-			fmt.Println("AIが作成したテキストに問題があります", err)
+			fmt.Println("AIが作成したテキストに問題があります")
 			return model.AiTextResponse{}, fmt.Errorf("AIが作成したテキストに問題があります")
 		}
 		textArr[i] = strings.Split(text, ":")[1]
 	}
 	for i, hiragana := range hiraganaArr {
 		if !strings.Contains(hiragana, ":") {
-			fmt.Println("AIが作成したテキストに問題があります(hiragana)", err)
+			fmt.Println("AIが作成したテキストに問題があります(hiragana)")
 			return model.AiTextResponse{}, fmt.Errorf("AIが作成したテキストに問題があります(hiragana)")
 		}
 		hiraganaArr[i] = strings.Split(hiragana, ":")[1]
