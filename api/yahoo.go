@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 const (
-	AppID = "dj00aiZpPU03Mlp2em91ejFnWiZzPWNvbnN1bWVyc2VjcmV0Jng9NzY-"
-	URL   = "https://jlp.yahooapis.jp/FuriganaService/V2/furigana"
+	URL = "https://jlp.yahooapis.jp/FuriganaService/V2/furigana"
 )
 
 type Params struct {
@@ -27,6 +27,11 @@ type RequestBody struct {
 }
 
 func Post(query string) (string, error) {
+	AppID := os.Getenv("CLIENT_ID")
+	if AppID == "" {
+		fmt.Println("CLIENT_IDを設定してください")
+		return "", fmt.Errorf("CLIENT_IDを設定してください")
+	}
 	headers := http.Header{
 		"Content-Type": []string{"application/json"},
 		"User-Agent":   []string{"Yahoo AppID: " + AppID},
