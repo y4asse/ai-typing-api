@@ -42,6 +42,10 @@ func CreateAiText(thema string) (string, error) {
 		return "", err
 	}
 
+	if data.Choices == nil {
+		fmt.Println("Open AIからのレスポンスに問題があります")
+		return "", fmt.Errorf("OpenAi空のレスポンスに問題があります")
+	}
 	message := data.Choices[0].Message.Content
 	fmt.Println(message)
 	message = strings.Replace(message, "『", "", -1)
