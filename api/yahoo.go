@@ -42,8 +42,7 @@ func Post(query string) (string, error) {
 		JsonRPC: "2.0",
 		Method:  "jlp.furiganaservice.furigana",
 		Params: Params{
-			Q:     query,
-			Grade: 1,
+			Q: query,
 		},
 	}
 
@@ -84,6 +83,6 @@ func Post(query string) (string, error) {
 			hiragana += word.Furigana
 		}
 	}
-	fmt.Println("successfully translate")
+	fmt.Println("successfully translate hiragana")
 	return hiragana, nil
 }
