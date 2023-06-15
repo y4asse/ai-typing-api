@@ -81,6 +81,7 @@ func CreateAiText(thema string) (string, error) {
 	message = strings.ReplaceAll(message, `七`, "7")
 	message = strings.ReplaceAll(message, `八`, "8")
 	message = strings.ReplaceAll(message, `九`, "9")
+	message = strings.ReplaceAll(message, `十`, "じゅう")
 	message = strings.ReplaceAll(message, `×`, "")
 
 	fmt.Println("successfully create ai text")
