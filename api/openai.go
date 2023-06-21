@@ -49,7 +49,7 @@ func CreateAiText(thema string) (string, error) {
 
 	if data.Choices == nil {
 		fmt.Println("Open AIからのレスポンスに問題があります")
-		return "", fmt.Errorf("OpenAi空のレスポンスに問題があります")
+		return "", fmt.Errorf("OpenAiからのレスポンスに問題があります")
 	}
 	message := data.Choices[0].Message.Content
 	fmt.Println(message)
