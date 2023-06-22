@@ -19,5 +19,6 @@ func NewRouter(openaiController controller.IOpenaiController, gameController con
 	}))
 	e.POST("/aiText", openaiController.GetAiText)
 	e.POST("/game", gameController.CreateGame)
+	e.GET("/gameRanking", gameController.GetGameRanking)
 	return e
 }

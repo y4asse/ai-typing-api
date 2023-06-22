@@ -7,6 +7,7 @@ import (
 )
 
 type ICreatedTextRepository interface {
+	// GetCreatedTextRepositoryRanking() error
 	CreateCreatedText(createdText *model.CreatedText) error
 }
 
@@ -25,3 +26,10 @@ func (createdTextRepository *createdTextRepository) CreateCreatedText(createdTex
 	}
 	return nil
 }
+
+// func (createdTextRepository *createdTextRepository) GetCreatedTextRepositoryRanking() error {
+// 	if err := createdTextRepository.db.Order("score").Limit(10).Error; err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }

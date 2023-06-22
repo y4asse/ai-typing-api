@@ -8,6 +8,7 @@ import (
 
 type IGameRepository interface {
 	CreateGame(game *model.Game) error
+	GetGameRanking(games *[]model.Game) error
 }
 
 type gameRepository struct {
@@ -21,6 +22,12 @@ func NewGameRepository(db *gorm.DB) IGameRepository {
 
 func (gameRepository *gameRepository) CreateGame(game *model.Game) error {
 	if err := gameRepository.db.Create(game).Error; err != nil {
+		return err
+	}
+	return nil
+}
+func (gameRepository *gameRepository) GetGameRanking(games *[]model.Game) error {
+	if err := gameRepository.db.Order("score desc").Limit(10).Find(games).Error; err != nil {
 		return err
 	}
 	return nil

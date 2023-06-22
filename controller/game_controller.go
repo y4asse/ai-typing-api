@@ -12,6 +12,7 @@ import (
 
 type IGameController interface {
 	CreateGame(context echo.Context) error
+	GetGameRanking(context echo.Context) error
 }
 
 type gameController struct {
@@ -24,32 +25,44 @@ func NewGameController(gameUseCase usecase.IGameUsecase, createdTextUsecase usec
 }
 
 func (gameController *gameController) CreateGame(context echo.Context) error {
-	tempGame := model.TempGame{}
-	if err := context.Bind(&tempGame); err != nil {
+	gameBody := model.GameBody{}
+	if err := context.Bind(&gameBody); err != nil {
+		fmt.Println(err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	game := model.Game{}
-	game.ID = uuid.NewString()
-	game.InputedThema = tempGame.InputedThema
-	game.ModeId = tempGame.ModeId
-	game.Score = tempGame.Score
-
-	createdText := model.CreatedText{}
-	createdText.ID = uuid.NewString()
-	createdText.Text = tempGame.Text
-	createdText.Hiragana = tempGame.Hiragana
-	createdText.GameId = game.ID
+	game := model.Game{
+		ID:           uuid.NewString(),
+		InputedThema: gameBody.InputedThema,
+		ModeId:       gameBody.ModeId,
+		Score:        gameBody.Score,
+	}
+	for i := range gameBody.Text {
+		createdText := model.CreatedText{
+			ID:       uuid.NewString(),
+			Text:     gameBody.Text[i],
+			Hiragana: gameBody.Hiragana[i],
+			GameId:   game.ID,
+		}
+		_, err := gameController.createdTextUsecase.CreateCreatedText(createdText)
+		if err != nil {
+			fmt.Println(err.Error())
+			return context.JSON(http.StatusInternalServerError, err.Error())
+		}
+	}
 
 	gameRes, err := gameController.gameUseCase.CreateGame(game)
 	if err != nil {
+		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	createdTextRes, err := gameController.createdTextUsecase.CreateCreatedText(createdText)
+	return context.JSON(http.StatusCreated, gameRes)
+}
+
+func (gameController *gameController) GetGameRanking(context echo.Context) error {
+	gamesRes, err := gameController.gameUseCase.GetGameRanking()
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	fmt.Println(createdTextRes)
-	return context.JSON(http.StatusCreated, gameRes)
-
+	return context.JSON(http.StatusOK, gamesRes)
 }
