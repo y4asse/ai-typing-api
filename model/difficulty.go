@@ -1,6 +1,6 @@
 package model
 
-type Difficulty struct {
+type Mode struct {
 	ID         int    `json:"id" gorm:"primaryKey"`
-	Difficulty string `json:"difficulty"`
+	Mode string `json:"mode"`
 }

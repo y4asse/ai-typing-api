@@ -8,7 +8,7 @@ type Game struct {
 	Score        int       `json:"score"`
 	InputedThema string    `json:"inputed_thema"`
 	CreatedAt    time.Time `json:"created_at"`
-	DifficultyId int       `json:"difficulty_id"`
+	ModeId       int       `json:"mode_id"`
 }
 
 type GameResponse struct {
@@ -17,5 +17,5 @@ type GameResponse struct {
 	Score        int       `json:"score"`
 	InputedThema string    `json:"inputed_thema"`
 	CreatedAt    time.Time `json:"created_at"`
-	DifficultyId int       `json:"difficulty_id"`
+	ModeId       int       `json:"mode_id"`
 }
