@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(oc controller.IOpenaiController) *echo.Echo {
+func NewRouter(openaiController controller.IOpenaiController, gameController controller.IGameController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FRONT_URL")},
@@ -17,6 +17,7 @@ func NewRouter(oc controller.IOpenaiController) *echo.Echo {
 		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
 		AllowCredentials: true,
 	}))
-	e.POST("/aiText", oc.GetAiText)
+	e.POST("/aiText", openaiController.GetAiText)
+	e.POST("/game", gameController.CreateGame)
 	return e
 }
