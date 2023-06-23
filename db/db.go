@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	// "github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,9 +17,10 @@ func NewDB() *gorm.DB {
 	}
 	fmt.Println("DB Connected!!!!!")
 	return db
+
 }
 
-func CloseDB(db *gorm.DB){
+func CloseDB(db *gorm.DB) {
 	sqlDB, _ := db.DB()
 	if err := sqlDB.Close(); err != nil {
 		log.Fatalln(err)
