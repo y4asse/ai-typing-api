@@ -10,4 +10,4 @@ RUN chmod +x /server
 
 EXPOSE ${PORT}
 
-CMD [ "go", "run", "main.go" ]
+# CMD [ "go", "run", "main.go" ]
