@@ -6,7 +6,6 @@ COPY . .
 RUN go mod download
 
 RUN go build -o /server
-RUN go run migrate/migrate.go
 
 EXPOSE ${PORT}
 
