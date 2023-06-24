@@ -62,6 +62,7 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 func (gameController *gameController) GetGameRanking(context echo.Context) error {
 	gamesRes, err := gameController.gameUseCase.GetGameRanking()
 	if err != nil {
+		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, gamesRes)

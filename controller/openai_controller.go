@@ -3,6 +3,7 @@ package controller
 import (
 	"ai-typing/model"
 	"ai-typing/usecase"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -23,11 +24,13 @@ func NewOpenaiController(ou usecase.IOpenaiUsecase) IOpenaiController {
 func (oc *openaiController) GetAiText(c echo.Context) error {
 	var requestBody model.AiTextRequest
 	if err := c.Bind(&requestBody); err != nil {
+		fmt.Println(err.Error())
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	thema := requestBody.Thema
 	openaiRes, err := oc.ou.GetAiText(thema)
 	if err != nil {
+		fmt.Println(err.Error())
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, openaiRes)
