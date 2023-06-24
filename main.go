@@ -3,54 +3,25 @@ package main
 
 import (
 	"ai-typing/controller"
-	// "ai-typing/db"
+	"ai-typing/db"
+	"ai-typing/migrate"
+	"ai-typing/repository"
+
 	"ai-typing/router"
 	"ai-typing/usecase"
 	"os"
 )
 
 func main() {
-	// db.NewDB()
+	migrate.Migrate()
+	db := db.NewDB()
+	gameRepository := repository.NewGameRepository(db)
+	createdTextRepository := repository.NewCreatedTextRepository(db)
+	gameUsecase := usecase.NewGameUsecase(gameRepository)
+	createdTextUsecase := usecase.NewCreatedTextUsecase(createdTextRepository)
+	gameController := controller.NewGameController(gameUsecase, createdTextUsecase)
 	openaiUsecase := usecase.NewOpenaiUsecase()
 	openaiController := controller.NewOpenaiController(openaiUsecase)
-	e := router.NewRouter(openaiController)
+	e := router.NewRouter(openaiController, gameController)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
-
-
-
-// Sample run-helloworld is a minimal Cloud Run service.
-// package main
-
-// import (
-//         "fmt"
-//         "log"
-//         "net/http"
-//         "os"
-// )
-
-// func main() {
-//         log.Print("starting server...")
-//         http.HandleFunc("/", handler)
-
-//         // Determine port for HTTP service.
-//         port := os.Getenv("PORT")
-//         if port == "" {
-//                 port = "8080"
-//                 log.Printf("defaulting to port %s", port)
-//         }
-
-//         // Start HTTP server.
-//         log.Printf("listening on port %s", port)
-//         if err := http.ListenAndServe(":"+port, nil); err != nil {
-//                 log.Fatal(err)
-//         }
-// }
-
-// func handler(w http.ResponseWriter, r *http.Request) {
-//         name := os.Getenv("NAME")
-//         if name == "" {
-//                 name = "World"
-//         }
-//         fmt.Fprintf(w, "Hello %s!\n", name)
-// }

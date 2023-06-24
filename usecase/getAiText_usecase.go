@@ -18,7 +18,10 @@ func NewOpenaiUsecase() IOpenaiUsecase {
 }
 
 func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
-
+	if len(strings.ReplaceAll(thema, " ", "")) > 10 {
+		// return c.JSON(http.StatusBadRequest, fmt.Errorf("テーマは10文字以内で入力してください"))
+		return model.AiTextResponse{}, fmt.Errorf("テーマは10文字以内で入力してください")
+	}
 	text, err := api.CreateAiText(thema)
 	if err != nil {
 		fmt.Println("aiテキストの作成に失敗しました", err)
