@@ -1,4 +1,4 @@
-package main
+package migrate
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"ai-typing/model"
 )
 
-func main() {
+func Migrate() {
 	fmt.Println("Migrating...")
 	dbConnection := db.NewDB()
 	defer fmt.Println("Successfully Migrated!!!!!")

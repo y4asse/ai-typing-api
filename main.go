@@ -4,6 +4,7 @@ package main
 import (
 	"ai-typing/controller"
 	"ai-typing/db"
+	"ai-typing/migrate"
 	"ai-typing/repository"
 
 	"ai-typing/router"
@@ -12,6 +13,7 @@ import (
 )
 
 func main() {
+	migrate.Migrate()
 	db := db.NewDB()
 	gameRepository := repository.NewGameRepository(db)
 	createdTextRepository := repository.NewCreatedTextRepository(db)
