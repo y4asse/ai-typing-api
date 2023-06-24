@@ -10,5 +10,4 @@ RUN chmod +x /server
 
 EXPOSE ${PORT}
 
-ENTRYPOINT [ "go", "run", "migrate/migrate.go" ]
 CMD ["/server" ]
