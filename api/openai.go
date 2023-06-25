@@ -64,6 +64,7 @@ func CreateAiText(thema string) (string, error) {
 	message = strings.ReplaceAll(message, `]`, "")
 	message = strings.ReplaceAll(message, `[`, "")
 	message = strings.ReplaceAll(message, ` `, "")
+	message = strings.ReplaceAll(message, `　`, "")
 	message = strings.ReplaceAll(message, `、`, "")
 	message = strings.ReplaceAll(message, `。`, "")
 	message = strings.ReplaceAll(message, `(`, "")
