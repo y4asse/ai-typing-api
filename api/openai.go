@@ -29,7 +29,6 @@ func CreateAiText(thema string) (string, error) {
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer "+API_KEY)
 	clientOpenai := &http.Client{}
-	fmt.Println("creating text...")
 	resp, err := clientOpenai.Do(req)
 	if err != nil {
 		fmt.Println("リクエストの送信に失敗しました", err)
@@ -52,7 +51,6 @@ func CreateAiText(thema string) (string, error) {
 		return "", fmt.Errorf("OpenAiからのレスポンスに問題があります")
 	}
 	message := data.Choices[0].Message.Content
-	fmt.Println(message)
 	message = strings.Replace(message, "{", "", 1)
 	message = strings.Replace(message, "}", "", 1)
 	message = strings.ReplaceAll(message, "『", "")
@@ -106,6 +104,5 @@ func CreateAiText(thema string) (string, error) {
 	message = strings.ReplaceAll(message, `￥`, "")
 	message = strings.ReplaceAll(message, `｜`, "")
 
-	fmt.Println("successfully create ai text")
 	return message, nil
 }

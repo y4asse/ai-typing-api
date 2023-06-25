@@ -58,7 +58,6 @@ func Post(query string) (string, error) {
 	req.Header = headers
 
 	client := &http.Client{}
-	fmt.Println("translating to hiragana...")
 	res, err := client.Do(req)
 	if err != nil {
 		return "", err
@@ -83,6 +82,5 @@ func Post(query string) (string, error) {
 			hiragana += word.Furigana
 		}
 	}
-	fmt.Println("successfully translate hiragana")
 	return hiragana, nil
 }
