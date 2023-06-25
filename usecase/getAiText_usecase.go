@@ -5,6 +5,7 @@ import (
 	"ai-typing/model"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 type IOpenaiUsecase interface {
@@ -18,9 +19,9 @@ func NewOpenaiUsecase() IOpenaiUsecase {
 }
 
 func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
-	trimThema := strings.Split(strings.ReplaceAll(thema, " ", ""), "")
-	if len(trimThema) > 10 {
-		fmt.Println(thema, len(trimThema))
+	trimThema := strings.ReplaceAll(thema, " ", "")
+	if utf8.RuneCountInString(trimThema) > 10 {
+		fmt.Println(thema, utf8.RuneCountInString(trimThema))
 		return model.AiTextResponse{}, fmt.Errorf("テーマは10文字以内で入力してください")
 	}
 	text, err := api.CreateAiText(thema)
