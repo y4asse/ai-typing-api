@@ -52,7 +52,6 @@ func CreateAiText(thema string) (string, error) {
 		return "", fmt.Errorf("OpenAiからのレスポンスに問題があります")
 	}
 	message := data.Choices[0].Message.Content
-	fmt.Println(message)
 	message = strings.Replace(message, "{", "", 1)
 	message = strings.Replace(message, "}", "", 1)
 	message = strings.ReplaceAll(message, "『", "")
