@@ -2,6 +2,7 @@ package repository
 
 import (
 	"ai-typing/model"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -9,6 +10,7 @@ import (
 type IGameRepository interface {
 	CreateGame(game *model.Game) error
 	GetGameRanking(games *[]model.Game) error
+	GetGameHistory(game *[]model.Game, userId string) error
 }
 
 type gameRepository struct {
@@ -28,6 +30,15 @@ func (gameRepository *gameRepository) CreateGame(game *model.Game) error {
 }
 func (gameRepository *gameRepository) GetGameRanking(games *[]model.Game) error {
 	if err := gameRepository.db.Order("score desc").Limit(10).Find(games).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (gameRepository *gameRepository) GetGameHistory(games *[]model.Game, userId string) error {
+	//gameからuser_id = userIdのデータを取得
+	fmt.Println(userId)
+	if err := gameRepository.db.Where("user_id = ?", userId).Order("created_at desc").Find(games).Error; err != nil {
 		return err
 	}
 	return nil
