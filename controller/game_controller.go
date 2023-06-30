@@ -15,6 +15,7 @@ type IGameController interface {
 	GetGameRanking(context echo.Context) error
 	GetGameHistory(context echo.Context) error
 	GetAllGame(context echo.Context) error
+	GetCreatedText(context echo.Context) error
 }
 
 type gameController struct {
@@ -96,4 +97,22 @@ func (gameController *gameController) GetAllGame(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, gamesRes)
+}
+
+func (gameController *gameController) GetCreatedText(context echo.Context) error {
+	type RequestBody struct {
+		GameId string `json:"game_id"`
+	}
+	var requestBody RequestBody
+	if err := context.Bind(&requestBody); err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	gameId := requestBody.GameId
+	createdTextsRes, err := gameController.gameUseCase.GetCreatedText(gameId)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, createdTextsRes)
 }
