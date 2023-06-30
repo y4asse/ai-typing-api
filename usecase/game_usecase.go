@@ -9,6 +9,7 @@ type IGameUsecase interface {
 	CreateGame(game model.Game) (model.GameResponse, error)
 	GetGameRanking() ([]model.GameResponse, error)
 	GetGameHistory(userId string) ([]model.GameResponse, error)
+	GetAllGame() ([]model.GameResponse, error)
 }
 
 type gameUsecase struct {
@@ -55,6 +56,26 @@ func (gameUsecase *gameUsecase) GetGameRanking() ([]model.GameResponse, error) {
 func (gameUsecase *gameUsecase) GetGameHistory(userId string) ([]model.GameResponse, error) {
 	games := []model.Game{}
 	err := gameUsecase.gameRepository.GetGameHistory(&games, userId)
+	if err != nil {
+		return nil, err
+	}
+	resGames := []model.GameResponse{}
+	for _, v := range games {
+		game := model.GameResponse{
+			ID:           v.ID,
+			Score:        v.Score,
+			InputedThema: v.InputedThema,
+			CreatedAt:    v.CreatedAt,
+			ModeId:       v.ModeId,
+		}
+		resGames = append(resGames, game)
+	}
+	return resGames, nil
+}
+
+func (gameUsecase *gameUsecase) GetAllGame() ([]model.GameResponse, error) {
+	games := []model.Game{}
+	err := gameUsecase.gameRepository.GetAllGame(&games)
 	if err != nil {
 		return nil, err
 	}

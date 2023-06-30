@@ -14,6 +14,7 @@ type IGameController interface {
 	CreateGame(context echo.Context) error
 	GetGameRanking(context echo.Context) error
 	GetGameHistory(context echo.Context) error
+	GetAllGame(context echo.Context) error
 }
 
 type gameController struct {
@@ -81,6 +82,15 @@ func (gameController *gameController) GetGameHistory(context echo.Context) error
 	}
 	userId := requestBody.UserId
 	gamesRes, err := gameController.gameUseCase.GetGameHistory(userId)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, gamesRes)
+}
+
+func (gameController *gameController) GetAllGame(context echo.Context) error {
+	gamesRes, err := gameController.gameUseCase.GetAllGame()
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
