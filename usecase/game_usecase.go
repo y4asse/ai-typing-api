@@ -10,7 +10,7 @@ type IGameUsecase interface {
 	GetGameRanking() ([]model.GameResponse, error)
 	GetGameHistory(userId string) ([]model.GameResponse, error)
 	GetAllGame() ([]model.GameResponse, error)
-	GetCreatedText(gameId string) (model.CreatedText, error)
+	GetCreatedText(gameId string) ([]model.CreatedText, error)
 }
 
 type gameUsecase struct {
@@ -94,11 +94,11 @@ func (gameUsecase *gameUsecase) GetAllGame() ([]model.GameResponse, error) {
 	return resGames, nil
 }
 
-func (gameUsecase *gameUsecase) GetCreatedText(gameId string) (model.CreatedText, error) {
-	createdText := model.CreatedText{}
-	err := gameUsecase.gameRepository.GetCreatedText(&createdText, gameId)
+func (gameUsecase *gameUsecase) GetCreatedText(gameId string) ([]model.CreatedText, error) {
+	createdTexts := []model.CreatedText{}
+	err := gameUsecase.gameRepository.GetCreatedText(&createdTexts, gameId)
 	if err != nil {
-		return model.CreatedText{}, err
+		return nil, err
 	}
-	return createdText, nil
+	return createdTexts, nil
 }

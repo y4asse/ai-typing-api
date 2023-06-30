@@ -11,7 +11,7 @@ type IGameRepository interface {
 	GetGameRanking(games *[]model.Game) error
 	GetGameHistory(game *[]model.Game, userId string) error
 	GetAllGame(games *[]model.Game) error
-	GetCreatedText(text *model.CreatedText, gameId string) error
+	GetCreatedText(text *[]model.CreatedText, gameId string) error
 }
 
 type gameRepository struct {
@@ -51,7 +51,7 @@ func (gameRepository *gameRepository) GetAllGame(games *[]model.Game) error {
 	return nil
 }
 
-func (gameRepository *gameRepository) GetCreatedText(text *model.CreatedText, gameId string) error {
+func (gameRepository *gameRepository) GetCreatedText(text *[]model.CreatedText, gameId string) error {
 	if err := gameRepository.db.Where("game_id = ?", gameId).Find(text).Error; err != nil {
 		return err
 	}
