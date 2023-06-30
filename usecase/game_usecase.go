@@ -64,7 +64,6 @@ func (gameUsecase *gameUsecase) GetGameHistory(userId string) ([]model.GameRespo
 	for _, v := range games {
 		game := model.GameResponse{
 			ID:           v.ID,
-			UserId:       v.UserId,
 			Score:        v.Score,
 			InputedThema: v.InputedThema,
 			CreatedAt:    v.CreatedAt,
