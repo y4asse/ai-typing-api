@@ -25,7 +25,6 @@ func (gameUsecase *gameUsecase) CreateGame(game model.Game) (model.GameResponse,
 	}
 	resGame := model.GameResponse{
 		ID:           game.ID,
-		UserId:       game.UserId,
 		Score:        game.Score,
 		InputedThema: game.InputedThema,
 		CreatedAt:    game.CreatedAt,
