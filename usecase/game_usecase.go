@@ -8,6 +8,10 @@ import (
 type IGameUsecase interface {
 	CreateGame(game model.Game) (model.GameResponse, error)
 	GetGameRanking() ([]model.GameResponse, error)
+	GetGameHistory(userId string) ([]model.GameResponse, error)
+	GetAllGame() ([]model.GameResponse, error)
+	GetCreatedText(gameId string) ([]model.CreatedText, error)
+	GetLatestGames(offset int) ([]model.GameResponse, error)
 }
 
 type gameUsecase struct {
@@ -24,7 +28,6 @@ func (gameUsecase *gameUsecase) CreateGame(game model.Game) (model.GameResponse,
 	}
 	resGame := model.GameResponse{
 		ID:           game.ID,
-		UserId:       game.UserId,
 		Score:        game.Score,
 		InputedThema: game.InputedThema,
 		CreatedAt:    game.CreatedAt,
@@ -42,7 +45,75 @@ func (gameUsecase *gameUsecase) GetGameRanking() ([]model.GameResponse, error) {
 	for _, v := range games {
 		game := model.GameResponse{
 			ID:           v.ID,
-			UserId:       v.UserId,
+			Score:        v.Score,
+			InputedThema: v.InputedThema,
+			CreatedAt:    v.CreatedAt,
+			ModeId:       v.ModeId,
+		}
+		resGames = append(resGames, game)
+	}
+	return resGames, nil
+}
+
+func (gameUsecase *gameUsecase) GetGameHistory(userId string) ([]model.GameResponse, error) {
+	games := []model.Game{}
+	err := gameUsecase.gameRepository.GetGameHistory(&games, userId)
+	if err != nil {
+		return nil, err
+	}
+	resGames := []model.GameResponse{}
+	for _, v := range games {
+		game := model.GameResponse{
+			ID:           v.ID,
+			Score:        v.Score,
+			InputedThema: v.InputedThema,
+			CreatedAt:    v.CreatedAt,
+			ModeId:       v.ModeId,
+		}
+		resGames = append(resGames, game)
+	}
+	return resGames, nil
+}
+
+func (gameUsecase *gameUsecase) GetAllGame() ([]model.GameResponse, error) {
+	games := []model.Game{}
+	err := gameUsecase.gameRepository.GetAllGame(&games)
+	if err != nil {
+		return nil, err
+	}
+	resGames := []model.GameResponse{}
+	for _, v := range games {
+		game := model.GameResponse{
+			ID:           v.ID,
+			Score:        v.Score,
+			InputedThema: v.InputedThema,
+			CreatedAt:    v.CreatedAt,
+			ModeId:       v.ModeId,
+		}
+		resGames = append(resGames, game)
+	}
+	return resGames, nil
+}
+
+func (gameUsecase *gameUsecase) GetCreatedText(gameId string) ([]model.CreatedText, error) {
+	createdTexts := []model.CreatedText{}
+	err := gameUsecase.gameRepository.GetCreatedText(&createdTexts, gameId)
+	if err != nil {
+		return nil, err
+	}
+	return createdTexts, nil
+}
+
+func (gameUsecase *gameUsecase) GetLatestGames(offset int) ([]model.GameResponse, error) {
+	games := []model.Game{}
+	err := gameUsecase.gameRepository.GetLatestGames(&games, offset)
+	if err != nil {
+		return nil, err
+	}
+	resGames := []model.GameResponse{}
+	for _, v := range games {
+		game := model.GameResponse{
+			ID:           v.ID,
 			Score:        v.Score,
 			InputedThema: v.InputedThema,
 			CreatedAt:    v.CreatedAt,

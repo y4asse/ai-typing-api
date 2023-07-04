@@ -11,7 +11,7 @@ import (
 func NewRouter(openaiController controller.IOpenaiController, gameController controller.IGameController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FRONT_URL")},
+		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FRONT_URL"), os.Getenv("FRONT_DEV_URL")},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept,
 			echo.HeaderAccessControlAllowHeaders, echo.HeaderXCSRFToken},
 		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
@@ -19,6 +19,10 @@ func NewRouter(openaiController controller.IOpenaiController, gameController con
 	}))
 	e.POST("/aiText", openaiController.GetAiText)
 	e.POST("/game", gameController.CreateGame)
+	e.POST("/gameHistory", gameController.GetGameHistory)
+	e.POST("/createdText", gameController.GetCreatedText)
+	e.GET("/game", gameController.GetAllGame)
 	e.GET("/gameRanking", gameController.GetGameRanking)
+	e.POST("/latestGames", gameController.GetLatestGames)
 	return e
 }
