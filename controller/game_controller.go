@@ -16,6 +16,7 @@ type IGameController interface {
 	GetGameHistory(context echo.Context) error
 	GetAllGame(context echo.Context) error
 	GetCreatedText(context echo.Context) error
+	GetLatestGames(context echo.Context) error
 }
 
 type gameController struct {
@@ -115,4 +116,24 @@ func (gameController *gameController) GetCreatedText(context echo.Context) error
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, createdTextsRes)
+}
+
+func (gameController *gameController) GetLatestGames(context echo.Context) error {
+	type RequestBody struct {
+		Offset int `json:"offset"`
+	}
+	var requestBody RequestBody
+	if err := context.Bind(&requestBody); err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	offset := requestBody.Offset
+	fmt.Println(offset)
+
+	gamesRes, err := gameController.gameUseCase.GetLatestGames(offset)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, gamesRes)
 }

@@ -12,6 +12,7 @@ type IGameRepository interface {
 	GetGameHistory(game *[]model.Game, userId string) error
 	GetAllGame(games *[]model.Game) error
 	GetCreatedText(text *[]model.CreatedText, gameId string) error
+	GetLatestGames(games *[]model.Game, offset int) error
 }
 
 type gameRepository struct {
@@ -53,6 +54,13 @@ func (gameRepository *gameRepository) GetAllGame(games *[]model.Game) error {
 
 func (gameRepository *gameRepository) GetCreatedText(text *[]model.CreatedText, gameId string) error {
 	if err := gameRepository.db.Where("game_id = ?", gameId).Find(text).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (gameRepository *gameRepository) GetLatestGames(games *[]model.Game, offset int) error {
+	if err := gameRepository.db.Order("created_at desc").Offset(offset).Limit(10).Find(games).Error; err != nil {
 		return err
 	}
 	return nil
