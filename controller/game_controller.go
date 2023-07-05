@@ -17,6 +17,7 @@ type IGameController interface {
 	GetAllGame(context echo.Context) error
 	GetCreatedText(context echo.Context) error
 	GetLatestGames(context echo.Context) error
+	GetTotalGameCount(context echo.Context) error
 }
 
 type gameController struct {
@@ -128,7 +129,6 @@ func (gameController *gameController) GetLatestGames(context echo.Context) error
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 	offset := requestBody.Offset
-	fmt.Println(offset)
 
 	gamesRes, err := gameController.gameUseCase.GetLatestGames(offset)
 	if err != nil {
@@ -136,4 +136,13 @@ func (gameController *gameController) GetLatestGames(context echo.Context) error
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, gamesRes)
+}
+
+func (gameController *gameController) GetTotalGameCount(context echo.Context) error {
+	totalGameCount, err := gameController.gameUseCase.GetTotalGameCount()
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, totalGameCount)
 }
