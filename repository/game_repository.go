@@ -13,6 +13,7 @@ type IGameRepository interface {
 	GetAllGame(games *[]model.Game) error
 	GetCreatedText(text *[]model.CreatedText, gameId string) error
 	GetLatestGames(games *[]model.Game, offset int) error
+	GetTotalGameCount() (int64, error)
 }
 
 type gameRepository struct {
@@ -64,4 +65,12 @@ func (gameRepository *gameRepository) GetLatestGames(games *[]model.Game, offset
 		return err
 	}
 	return nil
+}
+
+func (gameRepository *gameRepository) GetTotalGameCount() (int64, error) {
+	var totalGameCount int64
+	if err := gameRepository.db.Model(&model.Game{}).Count(&totalGameCount).Error; err != nil {
+		return 0, err
+	}
+	return totalGameCount, nil
 }
