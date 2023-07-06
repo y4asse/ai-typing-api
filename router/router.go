@@ -20,6 +20,7 @@ func NewRouter(openaiController controller.IOpenaiController, gameController con
 	e.POST("/aiText", openaiController.GetAiText)
 	e.GET("/game", gameController.GetAllGame)
 	e.POST("/game", gameController.CreateGame)
+	e.PUT("/gameScore/:id", gameController.UpdateGameScore)
 	e.POST("/gameHistory", gameController.GetGameHistory)
 	e.POST("/createdText", gameController.GetCreatedText)
 	e.GET("/gameRanking", gameController.GetGameRanking)

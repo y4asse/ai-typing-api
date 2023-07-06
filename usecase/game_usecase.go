@@ -13,6 +13,7 @@ type IGameUsecase interface {
 	GetCreatedText(gameId string) ([]model.CreatedText, error)
 	GetLatestGames(offset int) ([]model.GameResponse, error)
 	GetTotalGameCount() (int64, error)
+	UpdateGameScore(score int, gameId string) error
 }
 
 type gameUsecase struct {
@@ -131,4 +132,13 @@ func (gameUsecase *gameUsecase) GetTotalGameCount() (int64, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+
+func (gameUsecase *gameUsecase) UpdateGameScore(score int, gameId string) error {
+	err := gameUsecase.gameRepository.UpdateGameScore(score, gameId)
+	if err != nil {
+		return err
+	}
+	return nil
 }
