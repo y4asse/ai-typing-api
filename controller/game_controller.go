@@ -18,6 +18,7 @@ type IGameController interface {
 	GetCreatedText(context echo.Context) error
 	GetLatestGames(context echo.Context) error
 	GetTotalGameCount(context echo.Context) error
+	UpdateGameScore(context echo.Context) error
 }
 
 type gameController struct {
@@ -145,4 +146,22 @@ func (gameController *gameController) GetTotalGameCount(context echo.Context) er
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, totalGameCount)
+}
+
+func (gameController *gameController) UpdateGameScore(context echo.Context) error {
+	gameId := context.Param("id")
+
+	game := model.Game{}
+	if err := context.Bind(&game); err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	score := game.Score
+
+	err := gameController.gameUseCase.UpdateGameScore(score, gameId)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, "success")
 }
