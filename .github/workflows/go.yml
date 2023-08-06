@@ -8,7 +8,7 @@ on:
 env:
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_REGION: asia-northeast1
-  IMAGE_NAME: gcr.io/ai-typing/ai-typing-image
+  IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/ai-typing-image
 
 jobs:
   deploy:
