@@ -12,5 +12,4 @@ type CreatedTextResponse struct {
 	Text     string `json:"text"`
 	Hiragana string `json:"hiragana"`
 	GameId   string `json:"game_id"`
-	IsPost   bool   `json:"is_post"`
 }

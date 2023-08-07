@@ -7,8 +7,9 @@ import (
 )
 
 type ICreatedTextRepository interface {
-	// GetCreatedTextRepositoryRanking() error
+	FindByGameId(createdTexts *[]model.CreatedText, gameId string) error
 	CreateCreatedText(createdText *model.CreatedText) error
+	GetAllCreatedTexts(createdTexts *[]model.CreatedText) error
 }
 
 type createdTextRepository struct {
@@ -22,6 +23,20 @@ func NewCreatedTextRepository(db *gorm.DB) ICreatedTextRepository {
 
 func (createdTextRepository *createdTextRepository) CreateCreatedText(createdText *model.CreatedText) error {
 	if err := createdTextRepository.db.Create(createdText).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (createdTextRepository *createdTextRepository) GetAllCreatedTexts(createdTexts *[]model.CreatedText) error {
+	if err := createdTextRepository.db.Find(createdTexts).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (createdTextRepository *createdTextRepository) FindByGameId(createdTexts *[]model.CreatedText, gameId string) error {
+	if err := createdTextRepository.db.Where("game_id = ?", gameId).Find(createdTexts).Error; err != nil {
 		return err
 	}
 	return nil
