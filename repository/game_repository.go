@@ -12,7 +12,6 @@ type IGameRepository interface {
 	GetGameRanking(games *[]model.Game) error
 	GetGameHistory(game *[]model.Game, userId string) error
 	GetAllGame(games *[]model.Game) error
-	GetCreatedText(text *[]model.CreatedText, gameId string) error
 	GetLatestGames(games *[]model.Game, offset int) error
 	GetTotalGameCount() (int64, error)
 	UpdateGameScore(score int, gameId string) error
@@ -50,13 +49,6 @@ func (gameRepository *gameRepository) GetGameHistory(games *[]model.Game, userId
 
 func (gameRepository *gameRepository) GetAllGame(games *[]model.Game) error {
 	if err := gameRepository.db.Find(games).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
-func (gameRepository *gameRepository) GetCreatedText(text *[]model.CreatedText, gameId string) error {
-	if err := gameRepository.db.Where("game_id = ?", gameId).Find(text).Error; err != nil {
 		return err
 	}
 	return nil

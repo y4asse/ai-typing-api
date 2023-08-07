@@ -10,18 +10,18 @@ type IGameUsecase interface {
 	GetGameRanking() ([]model.GameResponse, error)
 	GetGameHistory(userId string) ([]model.GameResponse, error)
 	GetAllGame() ([]model.GameResponse, error)
-	GetCreatedText(gameId string) ([]model.CreatedText, error)
 	GetLatestGames(offset int) ([]model.GameResponse, error)
 	GetTotalGameCount() (int64, error)
 	UpdateGameScore(score int, gameId string) error
 }
 
 type gameUsecase struct {
-	gameRepository repository.IGameRepository
+	gameRepository        repository.IGameRepository
+	createdTextRepository repository.ICreatedTextRepository
 }
 
-func NewGameUsecase(gameRepository repository.IGameRepository) IGameUsecase {
-	return &gameUsecase{gameRepository}
+func NewGameUsecase(gameRepository repository.IGameRepository, createdTextRepository repository.ICreatedTextRepository) IGameUsecase {
+	return &gameUsecase{gameRepository, createdTextRepository}
 }
 
 func (gameUsecase *gameUsecase) CreateGame(game model.Game) (model.GameResponse, error) {
@@ -97,15 +97,6 @@ func (gameUsecase *gameUsecase) GetAllGame() ([]model.GameResponse, error) {
 	return resGames, nil
 }
 
-func (gameUsecase *gameUsecase) GetCreatedText(gameId string) ([]model.CreatedText, error) {
-	createdTexts := []model.CreatedText{}
-	err := gameUsecase.gameRepository.GetCreatedText(&createdTexts, gameId)
-	if err != nil {
-		return nil, err
-	}
-	return createdTexts, nil
-}
-
 func (gameUsecase *gameUsecase) GetLatestGames(offset int) ([]model.GameResponse, error) {
 	games := []model.Game{}
 	err := gameUsecase.gameRepository.GetLatestGames(&games, offset)
@@ -133,7 +124,6 @@ func (gameUsecase *gameUsecase) GetTotalGameCount() (int64, error) {
 	}
 	return count, nil
 }
-
 
 func (gameUsecase *gameUsecase) UpdateGameScore(score int, gameId string) error {
 	err := gameUsecase.gameRepository.UpdateGameScore(score, gameId)

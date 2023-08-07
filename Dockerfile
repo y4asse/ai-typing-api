@@ -10,4 +10,4 @@ RUN chmod +x /server
 
 EXPOSE ${PORT}
 
-CMD ["/server" ]
+# CMD ["/server" ]
