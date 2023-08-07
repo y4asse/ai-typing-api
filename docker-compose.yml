@@ -21,6 +21,7 @@ services:
       - FRONT_URL=${FRONT_URL}
     volumes:
       - ./:/app
+    command: go run main.go
   dev-postgres:
     container_name: db-container
     image: postgres:15.1-alpine
