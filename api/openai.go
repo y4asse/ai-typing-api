@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -35,7 +35,7 @@ func CreateAiText(thema string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body) //bodyの読みとり
+	body, err := io.ReadAll(resp.Body) //bodyの読みとり
 	if err != nil {
 		fmt.Println("bodyの読み取りに失敗しました:", err)
 		return "", err
