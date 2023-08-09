@@ -13,6 +13,7 @@ type IlikeRepository interface {
 	FetchAllByGameId(gameId string, like *[]model.Like) error
 	GetNumByGameId(gameId string) (int, error)
 	GetCountGroupByGameIdOrder(offset int, limit int, gameIdCount *[]model.GameIdCount) error
+	GetGameIdCount() (int, error)
 }
 
 type likeRepository struct {
@@ -61,7 +62,8 @@ func (likeRepository *likeRepository) GetNumByGameId(gameId string) (int, error)
 
 func (likeRepository *likeRepository) GetCountGroupByGameIdOrder(offset int, limit int, gameIdCount *[]model.GameIdCount) error {
 	if err := likeRepository.db.Model(&model.Like{}).
-		Select("game_id, count(*) as count").Group("game_id").
+		Select("game_id, count(*) as count").
+		Group("game_id").
 		Order("count desc").
 		Offset(offset).
 		Limit(limit).
@@ -69,4 +71,12 @@ func (likeRepository *likeRepository) GetCountGroupByGameIdOrder(offset int, lim
 		return err
 	}
 	return nil
+}
+
+func (likeRepository *likeRepository) GetGameIdCount() (int, error) {
+	var num int64
+	if err := likeRepository.db.Model(&model.Like{}).Group("game_id").Count(&num).Error; err != nil {
+		return 0, err
+	}
+	return int(num), nil
 }
