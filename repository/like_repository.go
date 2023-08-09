@@ -12,6 +12,7 @@ type IlikeRepository interface {
 	Delete(gameId string) error
 	FetchAllByGameId(gameId string, like *[]model.Like) error
 	GetNumByGameId(gameId string) (int, error)
+	GetCountGroupByGameIdOrder(offset int, limit int, gameIdCount *[]model.GameIdCount) error
 }
 
 type likeRepository struct {
@@ -56,4 +57,16 @@ func (likeRepository *likeRepository) GetNumByGameId(gameId string) (int, error)
 		return 0, err
 	}
 	return int(num), nil
+}
+
+func (likeRepository *likeRepository) GetCountGroupByGameIdOrder(offset int, limit int, gameIdCount *[]model.GameIdCount) error {
+	if err := likeRepository.db.Model(&model.Like{}).
+		Select("game_id, count(*) as count").Group("game_id").
+		Order("count desc").
+		Offset(offset).
+		Limit(limit).
+		Scan(gameIdCount).Error; err != nil {
+		return err
+	}
+	return nil
 }

@@ -3,6 +3,7 @@ package usecase
 import (
 	"ai-typing/model"
 	"ai-typing/repository"
+	"fmt"
 )
 
 type ILikeUsecase interface {
@@ -11,13 +12,15 @@ type ILikeUsecase interface {
 	Delete(gameId string) error
 	FetchAllByGameId(gameId string) ([]model.Like, error)
 	GetNumByGameId(gameId string) (int, error)
+	GetCountGroupByGameIdOrder(offset int, limit int) ([]model.GameWithCount, error)
 }
 type likeUsecase struct {
 	likeRepository repository.IlikeRepository
+	gameRepository repository.IGameRepository
 }
 
-func NewLikeUsecase(likeRepository repository.IlikeRepository) ILikeUsecase {
-	return &likeUsecase{likeRepository}
+func NewLikeUsecase(likeRepository repository.IlikeRepository, gameRepository repository.IGameRepository) ILikeUsecase {
+	return &likeUsecase{likeRepository, gameRepository}
 }
 
 func (likeUsecase *likeUsecase) FetchAll() ([]model.Like, error) {
@@ -60,4 +63,33 @@ func (likeUsecase *likeUsecase) GetNumByGameId(gameId string) (int, error) {
 		return 0, err
 	}
 	return num, nil
+}
+
+func (likeUsecase *likeUsecase) GetCountGroupByGameIdOrder(offset int, limit int) ([]model.GameWithCount, error) {
+	//gameIdを取得
+	gameIdCounts := []model.GameIdCount{}
+	err := likeUsecase.likeRepository.GetCountGroupByGameIdOrder(offset, limit, &gameIdCounts)
+	if err != nil {
+		return nil, err
+	}
+
+	//gameIdを元にgameを取得
+	gameWithCounts := []model.GameWithCount{}
+	for _, gameIdCount := range gameIdCounts {
+		fmt.Println(gameIdCount.GameId)
+		fmt.Println(gameIdCount.Count)
+		game := model.Game{}
+		//gameRepositoryfindを作る
+		err := likeUsecase.gameRepository.FindOne(&game, gameIdCount.GameId)
+		if err != nil {
+			return nil, err
+		}
+		gameWithCount := model.GameWithCount{
+			Game:  game,
+			Count: gameIdCount.Count,
+		}
+		gameWithCounts = append(gameWithCounts, gameWithCount)
+	}
+
+	return gameWithCounts, nil
 }
