@@ -15,6 +15,7 @@ type IGameRepository interface {
 	GetLatestGames(games *[]model.Game, offset int) error
 	GetTotalGameCount() (int64, error)
 	UpdateGameScore(score int, gameId string) error
+	FindOne(game *model.Game, gameId string) error
 }
 
 type gameRepository struct {
@@ -76,6 +77,13 @@ func (gameRepository *gameRepository) UpdateGameScore(score int, gameId string) 
 	}
 	if result.RowsAffected < 1 {
 		return fmt.Errorf("object does not exist")
+	}
+	return nil
+}
+
+func (gameRepository *gameRepository) FindOne(game *model.Game, gameId string) error {
+	if err := gameRepository.db.Where("id = ?", gameId).First(game).Error; err != nil {
+		return err
 	}
 	return nil
 }
