@@ -42,5 +42,6 @@ func NewRouter(
 	e.GET("/likeNum/:gameId", likeController.GetNumByGameId)
 	e.POST("/like", likeController.Create)
 	e.DELETE("/like/:gameId", likeController.Delete)
+	e.GET("likeCountRanking", likeController.GetCountGroupByGameIdOrder)
 	return e
 }

@@ -5,6 +5,7 @@ import (
 	"ai-typing/usecase"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,6 +16,7 @@ type IlikeController interface {
 	Delete(context echo.Context) error
 	FetchAllByGameId(context echo.Context) error
 	GetNumByGameId(context echo.Context) error
+	GetCountGroupByGameIdOrder(context echo.Context) error
 }
 
 type likeController struct {
@@ -74,4 +76,23 @@ func (likeController *likeController) GetNumByGameId(context echo.Context) error
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, num)
+}
+
+func (likeController *likeController) GetCountGroupByGameIdOrder(context echo.Context) error {
+	offset, err := strconv.Atoi(context.QueryParam("offset"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	limit, err := strconv.Atoi(context.QueryParam("limit"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+	gamesWithCount, err := likeController.likeUsecase.GetCountGroupByGameIdOrder(offset, limit)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, gamesWithCount)
 }

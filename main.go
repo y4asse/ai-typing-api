@@ -23,7 +23,7 @@ func main() {
 	//usecase
 	gameUsecase := usecase.NewGameUsecase(gameRepository, createdTextRepository)
 	createdTextUsecase := usecase.NewCreatedTextUsecase(createdTextRepository)
-	likeUsecase := usecase.NewLikeUsecase(likeRepository)
+	likeUsecase := usecase.NewLikeUsecase(likeRepository, gameRepository)
 
 	//controller
 	likeController := controller.NewLikeController(likeUsecase)
