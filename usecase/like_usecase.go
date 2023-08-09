@@ -3,7 +3,6 @@ package usecase
 import (
 	"ai-typing/model"
 	"ai-typing/repository"
-	"fmt"
 )
 
 type ILikeUsecase interface {
@@ -13,6 +12,7 @@ type ILikeUsecase interface {
 	FetchAllByGameId(gameId string) ([]model.Like, error)
 	GetNumByGameId(gameId string) (int, error)
 	GetCountGroupByGameIdOrder(offset int, limit int) ([]model.GameWithCount, error)
+	GetGameIdCount() (int, error)
 }
 type likeUsecase struct {
 	likeRepository repository.IlikeRepository
@@ -76,8 +76,6 @@ func (likeUsecase *likeUsecase) GetCountGroupByGameIdOrder(offset int, limit int
 	//gameIdを元にgameを取得
 	gameWithCounts := []model.GameWithCount{}
 	for _, gameIdCount := range gameIdCounts {
-		fmt.Println(gameIdCount.GameId)
-		fmt.Println(gameIdCount.Count)
 		game := model.Game{}
 		//gameRepositoryfindを作る
 		err := likeUsecase.gameRepository.FindOne(&game, gameIdCount.GameId)
@@ -92,4 +90,12 @@ func (likeUsecase *likeUsecase) GetCountGroupByGameIdOrder(offset int, limit int
 	}
 
 	return gameWithCounts, nil
+}
+
+func (likeUsecase *likeUsecase) GetGameIdCount() (int, error) {
+	num, err := likeUsecase.likeRepository.GetGameIdCount()
+	if err != nil {
+		return 0, err
+	}
+	return num, nil
 }

@@ -17,6 +17,7 @@ type IlikeController interface {
 	FetchAllByGameId(context echo.Context) error
 	GetNumByGameId(context echo.Context) error
 	GetCountGroupByGameIdOrder(context echo.Context) error
+	GetGameIdCount(context echo.Context) error
 }
 
 type likeController struct {
@@ -95,4 +96,14 @@ func (likeController *likeController) GetCountGroupByGameIdOrder(context echo.Co
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, gamesWithCount)
+}
+
+// いいねのついてるゲームの数を取得
+func (likeController *likeController) GetGameIdCount(context echo.Context) error {
+	count, err := likeController.likeUsecase.GetGameIdCount()
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, count)
 }
