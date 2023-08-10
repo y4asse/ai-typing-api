@@ -21,7 +21,10 @@ func NewRouter(
 		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
 		AllowCredentials: true,
 	}))
+
+	//openai
 	e.POST("/aiText", openaiController.GetAiText)
+	e.POST("/analyse", openaiController.Analyse)
 
 	//game
 	e.GET("/game", gameController.GetAllGame)
