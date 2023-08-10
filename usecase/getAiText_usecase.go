@@ -4,7 +4,6 @@ import (
 	"ai-typing/api"
 	"ai-typing/model"
 	"fmt"
-	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -61,13 +60,13 @@ func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
 }
 
 func (ou *openaiUsecase) Analyse(requestBody model.AnalyseRequest) (string, error) {
-	time := strconv.Itoa(requestBody.Time)
-	typeKeyCount := strconv.Itoa(requestBody.TypeKeyCount)
-	missTypeCount := strconv.Itoa(requestBody.MissTypeCount)
-	kpm := strconv.Itoa(requestBody.KPM)
+	time := requestBody.Time
+	typeKeyCount := requestBody.TypeKeyCount
+	missTypeCount := requestBody.MissTypeCount
+	kpm := requestBody.KPM
 	missTypeKey := requestBody.MissTypeKey
-	score := strconv.Itoa(requestBody.Score)
-	accuracy := strconv.Itoa(requestBody.Accuracy)
+	score := requestBody.Score
+	accuracy := requestBody.Accuracy
 	analyseRes, err := api.Analyse(time, typeKeyCount, missTypeCount, kpm, missTypeKey, score, accuracy)
 	if err != nil {
 		fmt.Println("解析に失敗しました", err)

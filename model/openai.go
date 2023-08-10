@@ -31,11 +31,11 @@ type AiTextRequest struct {
 }
 
 type AnalyseRequest struct {
-	Score         int    `json:"score"`
-	Time          int    `json:"time"`
-	TypeKeyCount  int    `json:"type_key_count"`
-	MissTypeCount int    `json:"miss_type_count"`
-	KPM           int    `json:"kpm"`
-	Accuracy      int    `json:"accuracy"`
+	Score         string `json:"score"`
+	Time          string `json:"time"`
+	TypeKeyCount  string `json:"type_key_count"`
+	MissTypeCount string `json:"miss_type_count"`
+	KPM           string `json:"kpm"`
+	Accuracy      string `json:"accuracy"`
 	MissTypeKey   string `json:"miss_type_key"`
 }
