@@ -11,6 +11,7 @@ import (
 
 type IOpenaiController interface {
 	GetAiText(c echo.Context) error
+	Analyse(c echo.Context) error
 }
 
 type openaiController struct {
@@ -34,4 +35,18 @@ func (oc *openaiController) GetAiText(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusOK, openaiRes)
+}
+
+func (oc *openaiController) Analyse(c echo.Context) error {
+	var requestBody model.AnalyseRequest
+	if err := c.Bind(&requestBody); err != nil {
+		fmt.Println(err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	analyseRes, err := oc.ou.Analyse(requestBody)
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, analyseRes)
 }

@@ -4,12 +4,14 @@ import (
 	"ai-typing/api"
 	"ai-typing/model"
 	"fmt"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
 
 type IOpenaiUsecase interface {
 	GetAiText(thema string) (model.AiTextResponse, error)
+	Analyse(model.AnalyseRequest) (string, error)
 }
 
 type openaiUsecase struct{}
@@ -56,4 +58,20 @@ func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
 		Hiragana: hiraganaArr,
 	}
 	return resAiTextResponse, nil
+}
+
+func (ou *openaiUsecase) Analyse(requestBody model.AnalyseRequest) (string, error) {
+	time := strconv.Itoa(requestBody.Time)
+	typeKeyCount := strconv.Itoa(requestBody.TypeKeyCount)
+	missTypeCount := strconv.Itoa(requestBody.MissTypeCount)
+	kpm := strconv.Itoa(requestBody.KPM)
+	missTypeKey := requestBody.MissTypeKey
+	score := strconv.Itoa(requestBody.Score)
+	accuracy := strconv.Itoa(requestBody.Accuracy)
+	analyseRes, err := api.Analyse(time, typeKeyCount, missTypeCount, kpm, missTypeKey, score, accuracy)
+	if err != nil {
+		fmt.Println("解析に失敗しました", err)
+		return "", err
+	}
+	return analyseRes, nil
 }
