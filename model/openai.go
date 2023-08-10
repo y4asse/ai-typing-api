@@ -6,7 +6,7 @@ type Message struct {
 }
 
 type AiTextResponse struct {
-	Text  []string `json:"text"`
+	Text     []string `json:"text"`
 	Hiragana []string `json:"hiragana"`
 }
 
@@ -28,4 +28,14 @@ type OpenaiResponse struct {
 
 type AiTextRequest struct {
 	Thema string `json:"thema"`
+}
+
+type AnalyseRequest struct {
+	Score         string `json:"score"`
+	Time          string `json:"time"`
+	TypeKeyCount  string `json:"type_key_count"`
+	MissTypeCount string `json:"miss_type_count"`
+	KPM           string `json:"kpm"`
+	Accuracy      string `json:"accuracy"`
+	MissTypeKey   string `json:"miss_type_key"`
 }
