@@ -14,7 +14,7 @@ import (
 func CreateAiText(thema string) (string, error) {
 	method := "POST"
 	OPEN_AI_URL := "https://api.openai.com/v1/chat/completions"
-	payload := strings.NewReader(`{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "` + thema + `について5つの短文を考えて{1:文章, 2:文章...}のjson形式で教えて"}]}`)
+	payload := strings.NewReader(`{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "` + thema + `について5つの短文を考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"}]}`)
 	API_KEY := os.Getenv("API_KEY")
 	if API_KEY == "" {
 		fmt.Println("API_KEYを設定してください")
