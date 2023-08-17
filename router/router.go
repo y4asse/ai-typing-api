@@ -23,7 +23,7 @@ func NewRouter(
 	}))
 
 	//openai
-	e.POST("/aiText", openaiController.GetAiText)
+	e.GET("/aiText", openaiController.GetAiText)
 	e.POST("/analyse", openaiController.Analyse)
 
 	//game
@@ -37,7 +37,7 @@ func NewRouter(
 
 	//createdText
 	e.GET("/createdText/:gameId", createdTextController.FindByGameId)
-	e.GET(("/createdText"), createdTextController.GetAllCreatedTexts)
+	e.GET("/createdText", createdTextController.GetAllCreatedTexts)
 
 	//like
 	e.GET("/likes", likeController.FetchAll)
