@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"firebase.google.com/go/auth"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
@@ -30,6 +31,9 @@ func NewGameController(gameUseCase usecase.IGameUsecase, createdTextUsecase usec
 }
 
 func (gameController *gameController) CreateGame(context echo.Context) error {
+	token := context.Get("token").(*auth.Token)
+	claims := token.Claims
+	uid, _ := claims["user_id"].(string)
 	gameBody := model.GameBody{}
 	if err := context.Bind(&gameBody); err != nil {
 		fmt.Println(err.Error())
@@ -41,7 +45,7 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 		InputedThema: gameBody.InputedThema,
 		ModeId:       gameBody.ModeId,
 		Score:        gameBody.Score,
-		UserId:       gameBody.UserId,
+		UserId:       uid,
 	}
 	for i := range gameBody.Text {
 		createdText := model.CreatedText{
@@ -75,16 +79,19 @@ func (gameController *gameController) GetGameRanking(context echo.Context) error
 }
 
 func (gameController *gameController) GetGameHistory(context echo.Context) error {
-	type RequestBody struct {
-		UserId string `json:"user_id"`
-	}
-	var requestBody RequestBody
-	if err := context.Bind(&requestBody); err != nil {
-		fmt.Println(err.Error())
-		return context.JSON(http.StatusBadRequest, err.Error())
-	}
-	userId := requestBody.UserId
-	gamesRes, err := gameController.gameUseCase.GetGameHistory(userId)
+	token := context.Get("token").(*auth.Token)
+	claims := token.Claims
+	uid, _ := claims["user_id"].(string)
+	// type RequestBody struct {
+	// 	UserId string `json:"user_id"`
+	// }
+	// var requestBody RequestBody
+	// if err := context.Bind(&requestBody); err != nil {
+	// 	fmt.Println(err.Error())
+	// 	return context.JSON(http.StatusBadRequest, err.Error())
+	// }
+	// userId := requestBody.UserId
+	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
