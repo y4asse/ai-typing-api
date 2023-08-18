@@ -82,15 +82,6 @@ func (gameController *gameController) GetGameHistory(context echo.Context) error
 	token := context.Get("token").(*auth.Token)
 	claims := token.Claims
 	uid, _ := claims["user_id"].(string)
-	// type RequestBody struct {
-	// 	UserId string `json:"user_id"`
-	// }
-	// var requestBody RequestBody
-	// if err := context.Bind(&requestBody); err != nil {
-	// 	fmt.Println(err.Error())
-	// 	return context.JSON(http.StatusBadRequest, err.Error())
-	// }
-	// userId := requestBody.UserId
 	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid)
 	if err != nil {
 		fmt.Println(err.Error())
