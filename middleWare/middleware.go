@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	firebase "firebase.google.com/go"
@@ -22,7 +23,7 @@ func AuthAllowGuest() echo.MiddlewareFunc {
 
 func auth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		opt := option.WithCredentialsFile("firebase_secret_key.json")
+		opt := option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 		app, err := firebase.NewApp(context.Background(), nil, opt)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -50,7 +51,7 @@ func auth(next echo.HandlerFunc) echo.HandlerFunc {
 
 func authAllowGuest(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		opt := option.WithCredentialsFile("firebase_secret_key.json")
+		opt := option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 		app, err := firebase.NewApp(context.Background(), nil, opt)
 		if err != nil {
 			fmt.Println(err.Error())
