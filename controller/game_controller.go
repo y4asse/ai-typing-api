@@ -5,6 +5,7 @@ import (
 	"ai-typing/usecase"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"firebase.google.com/go/auth"
 	"github.com/google/uuid"
@@ -41,14 +42,11 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 	}
 
 	game := model.Game{
-		ID:            uuid.NewString(),
-		InputedThema:  gameBody.InputedThema,
-		ModeId:        gameBody.ModeId,
-		Score:         gameBody.Score,
-		UserId:        uid,
-		TotalKeyCount: gameBody.TotalKeyCount,
-		TotalMissType: gameBody.TotalMissType,
-		TotalTime:     gameBody.TotalTime,
+		ID:           uuid.NewString(),
+		InputedThema: gameBody.InputedThema,
+		ModeId:       gameBody.ModeId,
+		Score:        gameBody.Score,
+		UserId:       uid,
 	}
 	for i := range gameBody.Text {
 		createdText := model.CreatedText{
@@ -73,7 +71,8 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 }
 
 func (gameController *gameController) GetGameRanking(context echo.Context) error {
-	gamesRes, err := gameController.gameUseCase.GetGameRanking()
+	border, _ := strconv.Atoi(context.QueryParam("border"))
+	gamesRes, err := gameController.gameUseCase.GetGameRanking(border)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
@@ -139,8 +138,11 @@ func (gameController *gameController) UpdateGameScore(context echo.Context) erro
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 	score := game.Score
+	totalKeyCount := game.TotalKeyCount
+	totalTime := game.TotalTime
+	totalMissType := game.TotalMissType
 
-	err := gameController.gameUseCase.UpdateGameScore(score, gameId)
+	err := gameController.gameUseCase.UpdateGameScore(score, totalKeyCount, totalTime, totalMissType, gameId)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())

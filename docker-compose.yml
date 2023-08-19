@@ -22,7 +22,6 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - ./:/app
-    command: go run main.go
   dev-postgres:
     container_name: db-container
     image: postgres:15.1-alpine

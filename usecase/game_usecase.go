@@ -7,12 +7,12 @@ import (
 
 type IGameUsecase interface {
 	CreateGame(game model.Game) (model.GameResponse, error)
-	GetGameRanking() ([]model.GameResponse, error)
+	GetGameRanking(border int) ([]model.GameResponse, error)
 	GetGameHistory(userId string) ([]model.GameResponse, error)
 	GetAllGame() ([]model.GameResponse, error)
 	GetLatestGames(offset int) ([]model.GameResponse, error)
 	GetTotalGameCount() (int64, error)
-	UpdateGameScore(score int, gameId string) error
+	UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error
 }
 
 type gameUsecase struct {
@@ -41,19 +41,22 @@ func (gameUsecase *gameUsecase) CreateGame(game model.Game) (model.GameResponse,
 	return resGame, nil
 }
 
-func (gameUsecase *gameUsecase) GetGameRanking() ([]model.GameResponse, error) {
+func (gameUsecase *gameUsecase) GetGameRanking(border int) ([]model.GameResponse, error) {
 	games := []model.Game{}
-	if err := gameUsecase.gameRepository.GetGameRanking(&games); err != nil {
+	if err := gameUsecase.gameRepository.GetGameRanking(&games, border); err != nil {
 		return nil, err
 	}
 	resGames := []model.GameResponse{}
 	for _, v := range games {
 		game := model.GameResponse{
-			ID:           v.ID,
-			Score:        v.Score,
-			InputedThema: v.InputedThema,
-			CreatedAt:    v.CreatedAt,
-			ModeId:       v.ModeId,
+			ID:            v.ID,
+			Score:         v.Score,
+			InputedThema:  v.InputedThema,
+			CreatedAt:     v.CreatedAt,
+			ModeId:        v.ModeId,
+			TotalKeyCount: v.TotalKeyCount,
+			TotalMissType: v.TotalMissType,
+			TotalTime:     v.TotalTime,
 		}
 		resGames = append(resGames, game)
 	}
@@ -69,11 +72,14 @@ func (gameUsecase *gameUsecase) GetGameHistory(userId string) ([]model.GameRespo
 	resGames := []model.GameResponse{}
 	for _, v := range games {
 		game := model.GameResponse{
-			ID:           v.ID,
-			Score:        v.Score,
-			InputedThema: v.InputedThema,
-			CreatedAt:    v.CreatedAt,
-			ModeId:       v.ModeId,
+			ID:            v.ID,
+			Score:         v.Score,
+			InputedThema:  v.InputedThema,
+			CreatedAt:     v.CreatedAt,
+			ModeId:        v.ModeId,
+			TotalKeyCount: v.TotalKeyCount,
+			TotalMissType: v.TotalMissType,
+			TotalTime:     v.TotalTime,
 		}
 		resGames = append(resGames, game)
 	}
@@ -89,11 +95,14 @@ func (gameUsecase *gameUsecase) GetAllGame() ([]model.GameResponse, error) {
 	resGames := []model.GameResponse{}
 	for _, v := range games {
 		game := model.GameResponse{
-			ID:           v.ID,
-			Score:        v.Score,
-			InputedThema: v.InputedThema,
-			CreatedAt:    v.CreatedAt,
-			ModeId:       v.ModeId,
+			ID:            v.ID,
+			Score:         v.Score,
+			InputedThema:  v.InputedThema,
+			CreatedAt:     v.CreatedAt,
+			ModeId:        v.ModeId,
+			TotalKeyCount: v.TotalKeyCount,
+			TotalMissType: v.TotalMissType,
+			TotalTime:     v.TotalTime,
 		}
 		resGames = append(resGames, game)
 	}
@@ -109,11 +118,14 @@ func (gameUsecase *gameUsecase) GetLatestGames(offset int) ([]model.GameResponse
 	resGames := []model.GameResponse{}
 	for _, v := range games {
 		game := model.GameResponse{
-			ID:           v.ID,
-			Score:        v.Score,
-			InputedThema: v.InputedThema,
-			CreatedAt:    v.CreatedAt,
-			ModeId:       v.ModeId,
+			ID:            v.ID,
+			Score:         v.Score,
+			InputedThema:  v.InputedThema,
+			CreatedAt:     v.CreatedAt,
+			ModeId:        v.ModeId,
+			TotalKeyCount: v.TotalKeyCount,
+			TotalMissType: v.TotalMissType,
+			TotalTime:     v.TotalTime,
 		}
 		resGames = append(resGames, game)
 	}
@@ -128,8 +140,8 @@ func (gameUsecase *gameUsecase) GetTotalGameCount() (int64, error) {
 	return count, nil
 }
 
-func (gameUsecase *gameUsecase) UpdateGameScore(score int, gameId string) error {
-	err := gameUsecase.gameRepository.UpdateGameScore(score, gameId)
+func (gameUsecase *gameUsecase) UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error {
+	err := gameUsecase.gameRepository.UpdateGameScore(score, totalKeyCount, totalTime, TotalMissType, gameId)
 	if err != nil {
 		return err
 	}
