@@ -29,11 +29,14 @@ func (gameUsecase *gameUsecase) CreateGame(game model.Game) (model.GameResponse,
 		return model.GameResponse{}, err
 	}
 	resGame := model.GameResponse{
-		ID:           game.ID,
-		Score:        game.Score,
-		InputedThema: game.InputedThema,
-		CreatedAt:    game.CreatedAt,
-		ModeId:       game.ModeId,
+		ID:            game.ID,
+		Score:         game.Score,
+		InputedThema:  game.InputedThema,
+		CreatedAt:     game.CreatedAt,
+		ModeId:        game.ModeId,
+		TotalKeyCount: game.TotalKeyCount,
+		TotalMissType: game.TotalMissType,
+		TotalTime:     game.TotalTime,
 	}
 	return resGame, nil
 }

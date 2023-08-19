@@ -19,6 +19,7 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - PORT=8080
       - FRONT_URL=${FRONT_URL}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     volumes:
       - ./:/app
     command: go run main.go
