@@ -9,7 +9,7 @@ import (
 )
 
 type IOpenaiUsecase interface {
-	GetAiText(thema string) (model.AiTextResponse, error)
+	GetAiText(thema string, detail string, aiModel string) (model.AiTextResponse, error)
 	Analyse(model.AnalyseRequest) (string, error)
 }
 
@@ -19,13 +19,13 @@ func NewOpenaiUsecase() IOpenaiUsecase {
 	return &openaiUsecase{}
 }
 
-func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
+func (ou *openaiUsecase) GetAiText(thema string, detail string, aiModel string) (model.AiTextResponse, error) {
 	trimThema := strings.ReplaceAll(thema, " ", "")
 	if utf8.RuneCountInString(trimThema) > 10 {
 		fmt.Println(thema, utf8.RuneCountInString(trimThema))
 		return model.AiTextResponse{}, fmt.Errorf("テーマは10文字以内で入力してください")
 	}
-	text, err := api.CreateAiText(thema)
+	text, err := api.CreateAiText(thema, detail, aiModel)
 	if err != nil {
 		fmt.Println("aiテキストの作成に失敗しました", err)
 		return model.AiTextResponse{}, err
@@ -40,6 +40,7 @@ func (ou *openaiUsecase) GetAiText(thema string) (model.AiTextResponse, error) {
 	for i, text := range textArr {
 		if !strings.Contains(text, ":") {
 			fmt.Println("AIが作成したテキストに問題があります")
+			fmt.Println(textArr)
 			return model.AiTextResponse{}, fmt.Errorf("AIが作成したテキストに問題があります")
 		}
 		textArr[i] = strings.Split(text, ":")[1]
