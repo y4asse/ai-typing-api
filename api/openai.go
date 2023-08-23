@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,20 +12,45 @@ import (
 	"ai-typing/model"
 )
 
-func CreateAiText(thema string) (string, error) {
+type Body struct {
+	Model    string     `json:"model"`
+	Messages []Messages `json:"messages"`
+}
+
+type Messages struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 	method := "POST"
 	OPEN_AI_URL := "https://api.openai.com/v1/chat/completions"
-	payload := strings.NewReader(
-		`{"model": "gpt-3.5-turbo", "messages": [{
-			"role": "user",
-			"content": "` + thema + `について5つの短文を考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"}]}`)
+	messages := []Messages{{Role: "user", Content: thema + "についての文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"}}
+	if detail == "を連打する文章" {
+		messages = []Messages{
+			{Role: "user", Content: "「無駄」を連打する文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
+			{Role: "assistant", Content: thema + `{1: "無駄無駄", 2: "無駄無駄無駄無駄", 3: "無駄無駄無駄無駄", 4: "無駄無駄無駄無駄", 5: "無駄無駄無駄無駄無駄無駄"}`},
+			{Role: "user", Content: "「" + thema + "」を連打する文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
+		}
+	}
+	if detail == "文章" {
+		messages = []Messages{
+			{Role: "user", Content: thema + "文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
+		}
+
+	}
+	reqBody := Body{
+		Model:    aiModel,
+		Messages: messages,
+	}
+	jsonBody, _ := json.Marshal(reqBody)
 	API_KEY := os.Getenv("API_KEY")
 	if API_KEY == "" {
 		fmt.Println("API_KEYを設定してください")
 		return "", fmt.Errorf("API_KEYを設定してください")
 	}
 
-	req, err := http.NewRequest(method, OPEN_AI_URL, payload)
+	req, err := http.NewRequest(method, OPEN_AI_URL, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		fmt.Println("リクエストの作成に失敗しました:", err)
 		return "", err
@@ -51,6 +77,7 @@ func CreateAiText(thema string) (string, error) {
 
 	if data.Choices == nil {
 		fmt.Println("Open AIからのレスポンスに問題があります")
+		fmt.Println(resp.Status)
 		return "", fmt.Errorf("OpenAiからのレスポンスに問題があります")
 	}
 	message := data.Choices[0].Message.Content
@@ -106,6 +133,7 @@ func CreateAiText(thema string) (string, error) {
 	message = strings.ReplaceAll(message, `＾`, "")
 	message = strings.ReplaceAll(message, `￥`, "")
 	message = strings.ReplaceAll(message, `｜`, "")
+	message = strings.ReplaceAll(message, `☆`, "")
 
 	return message, nil
 }

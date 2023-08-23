@@ -42,11 +42,14 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 	}
 
 	game := model.Game{
-		ID:           uuid.NewString(),
-		InputedThema: gameBody.InputedThema,
-		ModeId:       gameBody.ModeId,
-		Score:        gameBody.Score,
-		UserId:       uid,
+		ID:             uuid.NewString(),
+		InputedThema:   gameBody.InputedThema,
+		ModeId:         gameBody.ModeId,
+		Score:          gameBody.Score,
+		UserId:         uid,
+		DisableRanking: gameBody.DisableRanking,
+		AiModel:        gameBody.AiModel,
+		Detail:         gameBody.Detail,
 	}
 	for i := range gameBody.Text {
 		createdText := model.CreatedText{
