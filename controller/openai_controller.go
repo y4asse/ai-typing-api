@@ -25,7 +25,9 @@ func NewOpenaiController(ou usecase.IOpenaiUsecase) IOpenaiController {
 func (oc *openaiController) GetAiText(c echo.Context) error {
 	//query paramからデータを取り出す
 	thema := c.QueryParam("thema")
-	openaiRes, err := oc.ou.GetAiText(thema)
+	detail := c.QueryParam("detail")
+	aiModel := c.QueryParam("aiModel")
+	openaiRes, err := oc.ou.GetAiText(thema, detail, aiModel)
 	if err != nil {
 		fmt.Println(err.Error())
 		return c.JSON(http.StatusInternalServerError, err.Error())
