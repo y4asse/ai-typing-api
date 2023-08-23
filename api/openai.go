@@ -133,6 +133,7 @@ func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 	message = strings.ReplaceAll(message, `＾`, "")
 	message = strings.ReplaceAll(message, `￥`, "")
 	message = strings.ReplaceAll(message, `｜`, "")
+	message = strings.ReplaceAll(message, `☆`, "")
 
 	return message, nil
 }
