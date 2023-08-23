@@ -25,17 +25,17 @@ type Messages struct {
 func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 	method := "POST"
 	OPEN_AI_URL := "https://api.openai.com/v1/chat/completions"
-	messages := []Messages{{Role: "user", Content: thema + "についての文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"}}
+	messages := []Messages{{Role: "system", Content: "あなたはタイピング用の文章を作成するアシスタントです.あなたは「ああああああ」のように長押しで入力できる文は作成しません"}, {Role: "user", Content: thema + "についての短文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"}}
 	if detail == "を連打する文章" {
 		messages = []Messages{
-			{Role: "user", Content: "「無駄」を連打する文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
+			{Role: "user", Content: "「無駄」を連打する短文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
 			{Role: "assistant", Content: thema + `{1: "無駄無駄", 2: "無駄無駄無駄無駄", 3: "無駄無駄無駄無駄", 4: "無駄無駄無駄無駄", 5: "無駄無駄無駄無駄無駄無駄"}`},
-			{Role: "user", Content: "「" + thema + "」を連打する文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
+			{Role: "user", Content: "「" + thema + "」を連打する短文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
 		}
 	}
 	if detail == "文章" {
 		messages = []Messages{
-			{Role: "user", Content: thema + "文章を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
+			{Role: "user", Content: thema + "短文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
 		}
 
 	}
@@ -134,6 +134,7 @@ func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 	message = strings.ReplaceAll(message, `￥`, "")
 	message = strings.ReplaceAll(message, `｜`, "")
 	message = strings.ReplaceAll(message, `☆`, "")
+	message = strings.ReplaceAll(message, `…`, "")
 
 	return message, nil
 }
