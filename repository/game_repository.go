@@ -34,8 +34,9 @@ func (gameRepository *gameRepository) CreateGame(game *model.Game) error {
 	return nil
 }
 func (gameRepository *gameRepository) GetGameRanking(games *[]model.Game, border int) error {
-	//gameからtotal_key_countがborderを超えるデータを取得し，scoreで降順に並び替えて10件取得
-	if err := gameRepository.db.Where("total_key_count >= ?", border).Order("score desc").Limit(10).Find(games).Error; err != nil {
+	//gameからtotal_key_countがborderを超えてかつ,disable_rankingがfalseのデータを取得し，scoreで降順に並び替えて10件取得
+
+	if err := gameRepository.db.Where("total_key_count >= ? AND disable_ranking = ?", border, false).Order("score desc").Limit(10).Find(games).Error; err != nil {
 		return err
 	}
 	return nil
