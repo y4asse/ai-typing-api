@@ -16,6 +16,8 @@ type IGameRepository interface {
 	GetTotalGameCount() (int64, error)
 	UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error
 	FindOne(game *model.Game, gameId string) error
+	GetRankingCount(border int) (int64, error)
+	GetRankByGameId(border int, gameId string) (int64, error)
 }
 
 type gameRepository struct {
@@ -85,4 +87,26 @@ func (gameRepository *gameRepository) FindOne(game *model.Game, gameId string) e
 		return err
 	}
 	return nil
+}
+
+func (gameRepository *gameRepository) GetRankingCount(border int) (int64, error) {
+	var rankingCount int64
+	if err := gameRepository.db.Model(&model.Game{}).Where("total_key_count >= ? AND disable_ranking = ?", border, false).Count(&rankingCount).Error; err != nil {
+		return 0, err
+	}
+	return rankingCount, nil
+}
+
+func (gameRepository *gameRepository) GetRankByGameId(border int, gameId string) (int64, error) {
+	//ゲームスコアを降順に並び替えて，gameIdの順位を取得
+	var games []model.Game
+	if err := gameRepository.db.Where("total_key_count >= ? AND disable_ranking = ?", border, false).Order("score desc").Find(&games).Error; err != nil {
+		return 0, err
+	}
+	for i, game := range games {
+		if game.ID == gameId {
+			return int64(i + 1), nil
+		}
+	}
+	return 0, nil
 }

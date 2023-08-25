@@ -145,10 +145,13 @@ func (gameController *gameController) UpdateGameScore(context echo.Context) erro
 	totalTime := game.TotalTime
 	totalMissType := game.TotalMissType
 
-	err := gameController.gameUseCase.UpdateGameScore(score, totalKeyCount, totalTime, totalMissType, gameId)
+	count, rank, err := gameController.gameUseCase.UpdateGameScore(score, totalKeyCount, totalTime, totalMissType, gameId)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return context.JSON(http.StatusOK, "success")
+	res := model.Rank{}
+	res.Count = count
+	res.Rank = rank
+	return context.JSON(http.StatusOK, res)
 }

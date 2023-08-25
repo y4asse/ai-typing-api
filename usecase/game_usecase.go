@@ -12,7 +12,7 @@ type IGameUsecase interface {
 	GetAllGame() ([]model.Game, error)
 	GetLatestGames(offset int) ([]model.Game, error)
 	GetTotalGameCount() (int64, error)
-	UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error
+	UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) (int, int, error)
 }
 
 type gameUsecase struct {
@@ -74,10 +74,18 @@ func (gameUsecase *gameUsecase) GetTotalGameCount() (int64, error) {
 	return count, nil
 }
 
-func (gameUsecase *gameUsecase) UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error {
+func (gameUsecase *gameUsecase) UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) (int, int, error) {
 	err := gameUsecase.gameRepository.UpdateGameScore(score, totalKeyCount, totalTime, TotalMissType, gameId)
 	if err != nil {
-		return err
+		return 0, 0, err
 	}
-	return nil
+	count, err := gameUsecase.gameRepository.GetRankingCount(100)
+	if err != nil {
+		return 0, 0, err
+	}
+	rank, err := gameUsecase.gameRepository.GetRankByGameId(100, gameId)
+	if err != nil {
+		return 0, 0, err
+	}
+	return int(count), int(rank), nil
 }
