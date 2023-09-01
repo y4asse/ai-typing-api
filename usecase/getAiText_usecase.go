@@ -50,7 +50,7 @@ func (ou *openaiUsecase) GetAiText(thema string, detail string, aiModel string) 
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "十", "じゅう")
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "百", "ひゃく")
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "千", "せん")
-	trimedHiragana = strings.ReplaceAll(trimedHiragana, "数", "かず")
+	trimedHiragana = strings.ReplaceAll(trimedHiragana, "数", "すう")
 	hiraganaArr := strings.Split(trimedHiragana, ",")
 	textArr := strings.Split(text, ",")
 	for i, text := range textArr {
