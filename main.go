@@ -6,6 +6,7 @@ import (
 	"ai-typing/db"
 	"ai-typing/migrate"
 	"ai-typing/repository"
+	"ai-typing/validator"
 
 	"ai-typing/router"
 	"ai-typing/usecase"
@@ -15,6 +16,10 @@ import (
 func main() {
 	migrate.Migrate()
 	db := db.NewDB()
+
+	//validator
+	aiTextValidator := validator.NewAitextValidator()
+
 	//repository
 	gameRepository := repository.NewGameRepository(db)
 	createdTextRepository := repository.NewCreatedTextRepository(db)
@@ -29,7 +34,7 @@ func main() {
 	likeController := controller.NewLikeController(likeUsecase)
 	createTextController := controller.NewCreatedTextController(createdTextUsecase)
 	gameController := controller.NewGameController(gameUsecase, createdTextUsecase)
-	openaiUsecase := usecase.NewOpenaiUsecase()
+	openaiUsecase := usecase.NewOpenaiUsecase(aiTextValidator)
 	openaiController := controller.NewOpenaiController(openaiUsecase)
 	e := router.NewRouter(openaiController, gameController, createTextController, likeController)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
