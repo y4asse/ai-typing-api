@@ -22,10 +22,61 @@ type Messages struct {
 	Content string `json:"content"`
 }
 
+func trimOtherChar(message string) string {
+	message = strings.Replace(message, "{", "", 1)
+	message = strings.Replace(message, "}", "", 1)
+	message = strings.ReplaceAll(message, "『", "")
+	message = strings.ReplaceAll(message, "』", "")
+	message = strings.ReplaceAll(message, "「", "")
+	message = strings.ReplaceAll(message, "」", "")
+	message = strings.ReplaceAll(message, "\n", "")
+	message = strings.ReplaceAll(message, `"`, "")
+	message = strings.ReplaceAll(message, `]`, "")
+	message = strings.ReplaceAll(message, `[`, "")
+	message = strings.ReplaceAll(message, ` `, "")
+	message = strings.ReplaceAll(message, `　`, "")
+	message = strings.ReplaceAll(message, `、`, "")
+	message = strings.ReplaceAll(message, `。`, "")
+	message = strings.ReplaceAll(message, `(`, "")
+	message = strings.ReplaceAll(message, `)`, "")
+	message = strings.ReplaceAll(message, `）`, "")
+	message = strings.ReplaceAll(message, `（`, "")
+	message = strings.ReplaceAll(message, `》`, "")
+	message = strings.ReplaceAll(message, `《`, "")
+	message = strings.ReplaceAll(message, `×`, "")
+	message = strings.ReplaceAll(message, `・`, "")
+	message = strings.ReplaceAll(message, `”`, "")
+	message = strings.ReplaceAll(message, `“`, "")
+	message = strings.ReplaceAll(message, `’`, "")
+	message = strings.ReplaceAll(message, `‘`, "")
+	message = strings.ReplaceAll(message, `：`, "")
+	message = strings.ReplaceAll(message, `；`, "")
+	message = strings.ReplaceAll(message, `｝`, "")
+	message = strings.ReplaceAll(message, `｛`, "")
+	message = strings.ReplaceAll(message, `＜`, "")
+	message = strings.ReplaceAll(message, `＞`, "")
+	message = strings.ReplaceAll(message, `＿`, "")
+	message = strings.ReplaceAll(message, `＃`, "")
+	message = strings.ReplaceAll(message, `＄`, "")
+	message = strings.ReplaceAll(message, `％`, "")
+	message = strings.ReplaceAll(message, `＆`, "")
+	message = strings.ReplaceAll(message, `＝`, "")
+	message = strings.ReplaceAll(message, `～`, "")
+	message = strings.ReplaceAll(message, `＾`, "")
+	message = strings.ReplaceAll(message, `￥`, "")
+	message = strings.ReplaceAll(message, `｜`, "")
+	message = strings.ReplaceAll(message, `☆`, "")
+	message = strings.ReplaceAll(message, `…`, "")
+	return message
+}
+
 func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 	method := "POST"
 	OPEN_AI_URL := "https://api.openai.com/v1/chat/completions"
-	messages := []Messages{{Role: "system", Content: "あなたはタイピング用の文章を作成するアシスタントです.あなたは「ああああああ」のように長押しで入力できる文は作成しません"}, {Role: "user", Content: thema + "についての短文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"}}
+	messages := []Messages{
+		{Role: "system", Content: "あなたはタイピングゲーム用の文章を作成するアシスタントです.「ああああああ」のように長押しで入力できる文は作成しません."},
+		{Role: "user", Content: `「` + thema + `」についての文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて.`},
+	}
 	if detail == "を連打する文章" {
 		messages = []Messages{
 			{Role: "user", Content: "「無駄」を連打する短文を5つ考えて{1:文章, 2:文章, 3:文章, 4:文章, 5:文章}のjson形式で教えて"},
@@ -81,50 +132,7 @@ func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 		return "", fmt.Errorf("OpenAiからのレスポンスに問題があります")
 	}
 	message := data.Choices[0].Message.Content
-	message = strings.Replace(message, "{", "", 1)
-	message = strings.Replace(message, "}", "", 1)
-	message = strings.ReplaceAll(message, "『", "")
-	message = strings.ReplaceAll(message, "』", "")
-	message = strings.ReplaceAll(message, "「", "")
-	message = strings.ReplaceAll(message, "」", "")
-	message = strings.ReplaceAll(message, "\n", "")
-	message = strings.ReplaceAll(message, `"`, "")
-	message = strings.ReplaceAll(message, `]`, "")
-	message = strings.ReplaceAll(message, `[`, "")
-	message = strings.ReplaceAll(message, ` `, "")
-	message = strings.ReplaceAll(message, `　`, "")
-	message = strings.ReplaceAll(message, `、`, "")
-	message = strings.ReplaceAll(message, `。`, "")
-	message = strings.ReplaceAll(message, `(`, "")
-	message = strings.ReplaceAll(message, `)`, "")
-	message = strings.ReplaceAll(message, `）`, "")
-	message = strings.ReplaceAll(message, `（`, "")
-	message = strings.ReplaceAll(message, `》`, "")
-	message = strings.ReplaceAll(message, `《`, "")
-	message = strings.ReplaceAll(message, `×`, "")
-	message = strings.ReplaceAll(message, `・`, "")
-	message = strings.ReplaceAll(message, `”`, "")
-	message = strings.ReplaceAll(message, `“`, "")
-	message = strings.ReplaceAll(message, `’`, "")
-	message = strings.ReplaceAll(message, `‘`, "")
-	message = strings.ReplaceAll(message, `：`, "")
-	message = strings.ReplaceAll(message, `；`, "")
-	message = strings.ReplaceAll(message, `｝`, "")
-	message = strings.ReplaceAll(message, `｛`, "")
-	message = strings.ReplaceAll(message, `＜`, "")
-	message = strings.ReplaceAll(message, `＞`, "")
-	message = strings.ReplaceAll(message, `＿`, "")
-	message = strings.ReplaceAll(message, `＃`, "")
-	message = strings.ReplaceAll(message, `＄`, "")
-	message = strings.ReplaceAll(message, `％`, "")
-	message = strings.ReplaceAll(message, `＆`, "")
-	message = strings.ReplaceAll(message, `＝`, "")
-	message = strings.ReplaceAll(message, `～`, "")
-	message = strings.ReplaceAll(message, `＾`, "")
-	message = strings.ReplaceAll(message, `￥`, "")
-	message = strings.ReplaceAll(message, `｜`, "")
-	message = strings.ReplaceAll(message, `☆`, "")
-	message = strings.ReplaceAll(message, `…`, "")
+	message = trimOtherChar(message)
 
 	return message, nil
 }
