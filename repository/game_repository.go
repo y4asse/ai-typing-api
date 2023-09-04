@@ -10,7 +10,7 @@ import (
 type IGameRepository interface {
 	CreateGame(game *model.Game) error
 	GetGameRanking(games *[]model.Game, border int) error
-	GetGameHistory(game *[]model.Game, userId string) error
+	GetGameHistory(game *[]model.Game, userId string, limit int) error
 	GetAllGame(games *[]model.Game) error
 	GetLatestGames(games *[]model.Game, offset int) error
 	GetTotalGameCount() (int64, error)
@@ -44,9 +44,9 @@ func (gameRepository *gameRepository) GetGameRanking(games *[]model.Game, border
 	return nil
 }
 
-func (gameRepository *gameRepository) GetGameHistory(games *[]model.Game, userId string) error {
+func (gameRepository *gameRepository) GetGameHistory(games *[]model.Game, userId string, limit int) error {
 	//gameからuser_id = userIdのデータを取得
-	if err := gameRepository.db.Where("user_id = ?", userId).Order("created_at desc").Find(games).Error; err != nil {
+	if err := gameRepository.db.Where("user_id = ?", userId).Order("created_at desc").Limit(limit).Find(games).Error; err != nil {
 		return err
 	}
 	return nil

@@ -87,7 +87,8 @@ func (gameController *gameController) GetGameHistory(context echo.Context) error
 	token := context.Get("token").(*auth.Token)
 	claims := token.Claims
 	uid, _ := claims["user_id"].(string)
-	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid)
+	limit, _ := strconv.Atoi(context.QueryParam("limit"))
+	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid, limit)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())

@@ -8,7 +8,7 @@ import (
 type IGameUsecase interface {
 	CreateGame(game model.Game) (model.Game, error)
 	GetGameRanking(border int) ([]model.Game, error)
-	GetGameHistory(userId string) ([]model.Game, error)
+	GetGameHistory(userId string, limit int) ([]model.Game, error)
 	GetAllGame() ([]model.Game, error)
 	GetLatestGames(offset int) ([]model.Game, error)
 	GetTotalGameCount() (int64, error)
@@ -39,7 +39,7 @@ func (gameUsecase *gameUsecase) GetGameRanking(border int) ([]model.Game, error)
 	return games, nil
 }
 
-func (gameUsecase *gameUsecase) GetGameHistory(userId string) ([]model.Game, error) {
+func (gameUsecase *gameUsecase) GetGameHistory(userId string, limit int) ([]model.Game, error) {
 	games := []model.Game{}
 	err := gameUsecase.gameRepository.GetGameHistory(&games, userId)
 	if err != nil {
