@@ -14,7 +14,7 @@ func NewRouter(
 	gameController controller.IGameController,
 	createdTextController controller.ICreatedTextController,
 	likeController controller.IlikeController,
-	// userController controller.IUerController
+	userController controller.IUserController,
 ) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -61,5 +61,7 @@ func NewRouter(
 	//user
 	e.GET("/gameHistory", gameController.GetGameHistory, middleWare.Auth())
 	e.POST("/game", gameController.CreateGame, middleWare.AuthAllowGuest())
+	e.GET("user", userController.GetUser, middleWare.Auth())
+	e.PUT("user", userController.Update, middleWare.Auth())
 	return e
 }

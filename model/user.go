@@ -3,12 +3,11 @@ package model
 import "time"
 
 type User struct {
-	ID         string    `json:"id" gorm:"primaryKey"`
-	Name       string    `json:"name"`
-	UserId     string    `json:"user_id"`
-	TotalScore int       `json:"total_score"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	UserId    string    `json:"user_id" gorm:"primaryKey"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Image     string    `json:"image"`
 }
 
 type UserResponse struct {
