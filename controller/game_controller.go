@@ -50,6 +50,9 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 		DisableRanking: gameBody.DisableRanking,
 		AiModel:        gameBody.AiModel,
 		Detail:         gameBody.Detail,
+		TotalKeyCount:  gameBody.TotalKeyCount,
+		TotalMissType:  gameBody.TotalMissType,
+		TotalTime:      gameBody.TotalTime,
 	}
 	for i := range gameBody.Text {
 		createdText := model.CreatedText{

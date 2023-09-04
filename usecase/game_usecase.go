@@ -41,7 +41,7 @@ func (gameUsecase *gameUsecase) GetGameRanking(border int) ([]model.Game, error)
 
 func (gameUsecase *gameUsecase) GetGameHistory(userId string, limit int) ([]model.Game, error) {
 	games := []model.Game{}
-	err := gameUsecase.gameRepository.GetGameHistory(&games, userId)
+	err := gameUsecase.gameRepository.GetGameHistory(&games, userId, limit)
 	if err != nil {
 		return nil, err
 	}
