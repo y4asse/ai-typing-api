@@ -20,6 +20,7 @@ type IGameController interface {
 	GetLatestGames(context echo.Context) error
 	GetTotalGameCount(context echo.Context) error
 	UpdateGameScore(context echo.Context) error
+	GetAllByUserId(context echo.Context) error
 }
 
 type gameController struct {
@@ -158,4 +159,17 @@ func (gameController *gameController) UpdateGameScore(context echo.Context) erro
 	res.Count = count
 	res.Rank = rank
 	return context.JSON(http.StatusOK, res)
+}
+
+func (gameController *gameController) GetAllByUserId(context echo.Context) error {
+	token := context.Get("token").(*auth.Token)
+	claims := token.Claims
+	uid, _ := claims["user_id"].(string)
+
+	gamesRes, err := gameController.gameUseCase.GetAllByUserId(uid)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, gamesRes)
 }

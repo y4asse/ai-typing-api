@@ -39,11 +39,12 @@ func NewRouter(
 	e.POST("/analyse", openaiController.Analyse)
 
 	//game
-	e.GET("/game", gameController.GetAllGame)
+	// e.GET("/game", gameController.GetAllGame)
 	e.PUT("/gameScore/:id", gameController.UpdateGameScore)
 	e.GET("/gameRanking", gameController.GetGameRanking)
 	e.POST("/latestGames", gameController.GetLatestGames)
 	e.GET("/totalGameCount", gameController.GetTotalGameCount)
+	e.GET("/games", gameController.GetAllByUserId, middleWare.Auth())
 
 	//createdText
 	e.GET("/createdText/:gameId", createdTextController.FindByGameId)

@@ -18,6 +18,7 @@ type IGameRepository interface {
 	FindOne(game *model.Game, gameId string) error
 	GetRankingCount(border int) (int64, error)
 	GetRankByGameId(border int, gameId string) (int64, error)
+	GetAllByUserId(game *[]model.Game, userId string) error
 }
 
 type gameRepository struct {
@@ -109,4 +110,11 @@ func (gameRepository *gameRepository) GetRankByGameId(border int, gameId string)
 		}
 	}
 	return 0, nil
+}
+
+func (gameRepository *gameRepository) GetAllByUserId(game *[]model.Game, userId string) error {
+	if err := gameRepository.db.Where("user_id = ?", userId).Find(game).Error; err != nil {
+		return err
+	}
+	return nil
 }
