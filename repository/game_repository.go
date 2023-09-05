@@ -2,7 +2,6 @@ package repository
 
 import (
 	"ai-typing/model"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -14,7 +13,7 @@ type IGameRepository interface {
 	GetAllGame(games *[]model.Game) error
 	GetLatestGames(games *[]model.Game, offset int) error
 	GetTotalGameCount() (int64, error)
-	UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error
+	UpdateGameScore(game *model.Game) error
 	FindOne(game *model.Game, gameId string) error
 	GetRankingCount(border int) (int64, error)
 	GetRankByGameId(border int, gameId string) (int64, error)
@@ -75,10 +74,9 @@ func (gameRepository *gameRepository) GetTotalGameCount() (int64, error) {
 	return totalGameCount, nil
 }
 
-func (gameRepository *gameRepository) UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error {
-	result := gameRepository.db.Model(&model.Game{}).Where("id = ?", gameId).Updates(map[string]interface{}{"score": score, "total_key_count": totalKeyCount, "total_time": totalTime, "total_miss_type": TotalMissType})
-	if result.RowsAffected < 1 {
-		return fmt.Errorf("object does not exist")
+func (gameRepository *gameRepository) UpdateGameScore(game *model.Game) error {
+	if err := gameRepository.db.Model(&game).Updates(&game).Error; err != nil {
+		return err
 	}
 	return nil
 }

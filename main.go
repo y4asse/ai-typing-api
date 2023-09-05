@@ -40,6 +40,12 @@ func main() {
 	openaiController := controller.NewOpenaiController(openaiUsecase)
 	userController := controller.NewUserController(userusecase)
 
-	e := router.NewRouter(openaiController, gameController, createTextController, likeController, userController)
+	e := router.NewRouter(
+		openaiController,
+		gameController,
+		createTextController,
+		likeController,
+		userController,
+	)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
