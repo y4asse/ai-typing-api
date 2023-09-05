@@ -46,6 +46,7 @@ func trimNumKanji(trimedHiragana string) string {
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "億", "おく")
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "兆", "ちょう")
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "数", "すう")
+	trimedHiragana = strings.ReplaceAll(trimedHiragana, "\n", "")
 	return trimedHiragana
 }
 
