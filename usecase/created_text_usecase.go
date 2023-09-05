@@ -6,7 +6,7 @@ import (
 )
 
 type ICreatedTextUsecase interface {
-	CreateCreatedText(createdText model.CreatedText) (model.CreatedTextResponse, error)
+	CreateCreatedText(createdText model.CreatedText) (model.CreatedText, error)
 	GetAllCreatedTexts() ([]model.CreatedText, error)
 	FindByGameId(gameId string) ([]model.CreatedText, error)
 }
@@ -27,17 +27,11 @@ func (createdTextUsecase *createdTextUsecase) GetAllCreatedTexts() ([]model.Crea
 	return createdTexts, nil
 }
 
-func (createdTextUsecase *createdTextUsecase) CreateCreatedText(createdText model.CreatedText) (model.CreatedTextResponse, error) {
+func (createdTextUsecase *createdTextUsecase) CreateCreatedText(createdText model.CreatedText) (model.CreatedText, error) {
 	if err := createdTextUsecase.createdTextRepository.CreateCreatedText(&createdText); err != nil {
-		return model.CreatedTextResponse{}, err
+		return model.CreatedText{}, err
 	}
-	resCreatedText := model.CreatedTextResponse{
-		ID:       createdText.ID,
-		Text:     createdText.Text,
-		Hiragana: createdText.Hiragana,
-		GameId:   createdText.GameId,
-	}
-	return resCreatedText, nil
+	return createdText, nil
 }
 
 func (createdTextUsecase *createdTextUsecase) FindByGameId(gameId string) ([]model.CreatedText, error) {

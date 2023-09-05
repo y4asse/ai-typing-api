@@ -22,7 +22,7 @@ func NewOpenaiUsecase(aiTextValidator validator.IAiTextValidator) IOpenaiUsecase
 }
 
 func trimNumKanji(trimedHiragana string) string {
-	//yahooでは対応していない
+	//yahooでは対応していない文字
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "数十", "すうじゅう")
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "数百", "すうひゃく")
 	trimedHiragana = strings.ReplaceAll(trimedHiragana, "数千", "すうせん")
