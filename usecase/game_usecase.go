@@ -87,10 +87,11 @@ func selectBatch(game *model.Game, newBatches *[]model.Batch, currentBatches *[]
 		"moon":     500,
 		"mars":     1000,
 		"mercury":  1500,
-		"saturn":   2000,
-		"jupiter":  2500,
-		"sun":      3000,
-		"universe": 4000,
+		"jupiter":  2000,
+		"venus":    2500,
+		"saturn":   3000,
+		"sun":      3500,
+		"universe": 4500,
 	}
 	for key, value := range mapList {
 		if game.Score >= value {
@@ -131,30 +132,34 @@ func (gameUsecase *gameUsecase) UpdateGameScore(game *model.Game) (model.UpdateG
 		return model.UpdateGameResponse{}, err
 	}
 
+	//ランキングに反映されるゲームのみバッチを作成
 	newBatches := []model.Batch{}
-	if game.UserId != "" {
-		//現在のバッチを取得
-		currentBatches := []model.Batch{}
-		if err := gameUsecase.batchRepository.GetAllByUserId(&currentBatches, game.UserId); err != nil {
-			fmt.Println(err.Error())
-			return model.UpdateGameResponse{}, err
-		}
-
-		//スコアに応じてバッチを作成
-		err := selectBatch(game, &newBatches, &currentBatches)
-		if err != nil {
-			fmt.Println(err.Error())
-			return model.UpdateGameResponse{}, err
-		}
-
-		//新規バッチがあるときだけ新規バッチの更新
-		if len(newBatches) > 0 {
-			if err := gameUsecase.batchRepository.Create(&newBatches); err != nil {
+	if !game.DisableRanking {
+		if game.UserId != "" {
+			//現在のバッチを取得
+			currentBatches := []model.Batch{}
+			if err := gameUsecase.batchRepository.GetAllByUserId(&currentBatches, game.UserId); err != nil {
 				fmt.Println(err.Error())
 				return model.UpdateGameResponse{}, err
 			}
+
+			//スコアに応じてバッチを作成
+			err := selectBatch(game, &newBatches, &currentBatches)
+			if err != nil {
+				fmt.Println(err.Error())
+				return model.UpdateGameResponse{}, err
+			}
+
+			//新規バッチがあるときだけ新規バッチの更新
+			if len(newBatches) > 0 {
+				if err := gameUsecase.batchRepository.Create(&newBatches); err != nil {
+					fmt.Println(err.Error())
+					return model.UpdateGameResponse{}, err
+				}
+			}
 		}
 	}
+
 	response := model.UpdateGameResponse{
 		Count:   int(count),
 		Rank:    int(rank),

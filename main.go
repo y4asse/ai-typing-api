@@ -32,6 +32,7 @@ func main() {
 	createdTextUsecase := usecase.NewCreatedTextUsecase(createdTextRepository)
 	likeUsecase := usecase.NewLikeUsecase(likeRepository, gameRepository)
 	userusecase := usecase.NewUserUsecase(userRepository)
+	batchUsecase := usecase.NewBatchUsecase(batchRepository)
 
 	//controller
 	likeController := controller.NewLikeController(likeUsecase)
@@ -40,6 +41,7 @@ func main() {
 	openaiUsecase := usecase.NewOpenaiUsecase(aiTextValidator)
 	openaiController := controller.NewOpenaiController(openaiUsecase)
 	userController := controller.NewUserController(userusecase)
+	batchController := controller.NewBatchController(batchUsecase)
 
 	e := router.NewRouter(
 		openaiController,
@@ -47,6 +49,7 @@ func main() {
 		createTextController,
 		likeController,
 		userController,
+		batchController,
 	)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }

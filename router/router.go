@@ -15,6 +15,7 @@ func NewRouter(
 	createdTextController controller.ICreatedTextController,
 	likeController controller.IlikeController,
 	userController controller.IUserController,
+	batchController controller.IBatchController,
 ) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -64,5 +65,9 @@ func NewRouter(
 	e.POST("/game", gameController.CreateGame, middleWare.AuthAllowGuest())
 	e.GET("user", userController.GetUser, middleWare.Auth())
 	e.PUT("user", userController.Update, middleWare.Auth())
+
+	//batch
+	e.GET("/batches", batchController.GetAllByUserId, middleWare.Auth())
+
 	return e
 }
