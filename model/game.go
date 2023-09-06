@@ -31,3 +31,9 @@ type GameResponse struct {
 	AiModel        string    `json:"ai_model"`
 	Detail         string    `json:"detail"`
 }
+
+type UpdateGameResponse struct {
+	Count   int     `json:"count"`
+	Rank    int     `json:"rank"`
+	Batches []Batch `json:"batches"`
+}

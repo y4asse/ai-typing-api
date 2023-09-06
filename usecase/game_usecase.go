@@ -3,6 +3,7 @@ package usecase
 import (
 	"ai-typing/model"
 	"ai-typing/repository"
+	"fmt"
 )
 
 type IGameUsecase interface {
@@ -12,17 +13,21 @@ type IGameUsecase interface {
 	GetAllGame() ([]model.Game, error)
 	GetLatestGames(offset int) ([]model.Game, error)
 	GetTotalGameCount() (int64, error)
-	UpdateGameScore(game *model.Game) (int, int, error)
+	UpdateGameScore(game *model.Game) (model.UpdateGameResponse, error)
 	GetAllByUserId(userId string) ([]model.Game, error)
 }
 
 type gameUsecase struct {
 	gameRepository        repository.IGameRepository
 	createdTextRepository repository.ICreatedTextRepository
+	batchRepository       repository.IBatchRepository
 }
 
-func NewGameUsecase(gameRepository repository.IGameRepository, createdTextRepository repository.ICreatedTextRepository) IGameUsecase {
-	return &gameUsecase{gameRepository, createdTextRepository}
+func NewGameUsecase(gameRepository repository.IGameRepository,
+	createdTextRepository repository.ICreatedTextRepository,
+	batchRepository repository.IBatchRepository,
+) IGameUsecase {
+	return &gameUsecase{gameRepository, createdTextRepository, batchRepository}
 }
 
 func (gameUsecase *gameUsecase) CreateGame(game model.Game) (model.Game, error) {
@@ -75,22 +80,87 @@ func (gameUsecase *gameUsecase) GetTotalGameCount() (int64, error) {
 	return count, nil
 }
 
-func (gameUsecase *gameUsecase) UpdateGameScore(game *model.Game) (int, int, error) {
-	err := gameUsecase.gameRepository.UpdateGameScore(game)
+func selectBatch(game *model.Game, newBatches *[]model.Batch, currentBatches *[]model.Batch) error {
+	//スコアによるバッジの作成
+	mapList := map[string]int{
+		"earth":    1,
+		"moon":     500,
+		"mars":     1000,
+		"mercury":  1500,
+		"saturn":   2000,
+		"jupiter":  2500,
+		"sun":      3000,
+		"universe": 4000,
+	}
+	for key, value := range mapList {
+		if game.Score >= value {
+			batch := model.Batch{
+				UserId: game.UserId,
+				ModeId: game.ModeId,
+				Name:   key,
+			}
+			isExist := false
+			for _, currentBatch := range *currentBatches {
+				//すべて一致しない(現在取得していない)ときだけnewに追加
+				if currentBatch.Name == key && currentBatch.UserId == game.UserId && currentBatch.ModeId == game.ModeId {
+					isExist = true
+					break
+				}
+			}
+			if !isExist {
+				*newBatches = append(*newBatches, batch)
+			}
+		}
+	}
+	return nil
+}
+
+func (gameUsecase *gameUsecase) UpdateGameScore(game *model.Game) (model.UpdateGameResponse, error) {
+	err := gameUsecase.gameRepository.UpdateGameScore(game) //gameには変更後の全てのデータを含む
 	if err != nil {
-		return 0, 0, err
+		return model.UpdateGameResponse{}, err
 	}
 	border := 100
 	count, err := gameUsecase.gameRepository.GetRankingCount(border)
 	if err != nil {
-		return 0, 0, err
+		return model.UpdateGameResponse{}, err
 	}
 	gameId := game.ID
 	rank, err := gameUsecase.gameRepository.GetRankByGameId(100, gameId)
 	if err != nil {
-		return 0, 0, err
+		return model.UpdateGameResponse{}, err
 	}
-	return int(count), int(rank), nil
+
+	newBatches := []model.Batch{}
+	if game.UserId != "" {
+		//現在のバッチを取得
+		currentBatches := []model.Batch{}
+		if err := gameUsecase.batchRepository.GetAllByUserId(&currentBatches, game.UserId); err != nil {
+			fmt.Println(err.Error())
+			return model.UpdateGameResponse{}, err
+		}
+
+		//スコアに応じてバッチを作成
+		err := selectBatch(game, &newBatches, &currentBatches)
+		if err != nil {
+			fmt.Println(err.Error())
+			return model.UpdateGameResponse{}, err
+		}
+
+		//新規バッチがあるときだけ新規バッチの更新
+		if len(newBatches) > 0 {
+			if err := gameUsecase.batchRepository.Create(&newBatches); err != nil {
+				fmt.Println(err.Error())
+				return model.UpdateGameResponse{}, err
+			}
+		}
+	}
+	response := model.UpdateGameResponse{
+		Count:   int(count),
+		Rank:    int(rank),
+		Batches: newBatches,
+	}
+	return response, nil
 }
 
 func (gameUsecase *gameUsecase) GetAllByUserId(userId string) ([]model.Game, error) {

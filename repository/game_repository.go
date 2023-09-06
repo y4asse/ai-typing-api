@@ -78,6 +78,10 @@ func (gameRepository *gameRepository) UpdateGameScore(game *model.Game) error {
 	if err := gameRepository.db.Model(&game).Updates(&game).Error; err != nil {
 		return err
 	}
+	//gameに変更後の値を格納
+	if err := gameRepository.db.Where("id = ?", game.ID).First(game).Error; err != nil {
+		return err
+	}
 	return nil
 }
 

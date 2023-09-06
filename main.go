@@ -25,9 +25,10 @@ func main() {
 	createdTextRepository := repository.NewCreatedTextRepository(db)
 	likeRepository := repository.NewLikeRepository(db)
 	userRepository := repository.NewUserRepository(db)
+	batchRepository := repository.NewBatchRepository(db)
 
 	//usecase
-	gameUsecase := usecase.NewGameUsecase(gameRepository, createdTextRepository)
+	gameUsecase := usecase.NewGameUsecase(gameRepository, createdTextRepository, batchRepository)
 	createdTextUsecase := usecase.NewCreatedTextUsecase(createdTextRepository)
 	likeUsecase := usecase.NewLikeUsecase(likeRepository, gameRepository)
 	userusecase := usecase.NewUserUsecase(userRepository)
