@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"ai-typing/model"
+	"ai-typing/utils"
 )
 
 type Body struct {
@@ -20,54 +21,6 @@ type Body struct {
 type Messages struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
-}
-
-func trimOtherChar(message string) string {
-	message = strings.Replace(message, "{", "", 1)
-	message = strings.Replace(message, "}", "", 1)
-	message = strings.ReplaceAll(message, "『", "")
-	message = strings.ReplaceAll(message, "』", "")
-	message = strings.ReplaceAll(message, "「", "")
-	message = strings.ReplaceAll(message, "」", "")
-	message = strings.ReplaceAll(message, "\n", "")
-	message = strings.ReplaceAll(message, `"`, "")
-	message = strings.ReplaceAll(message, `]`, "")
-	message = strings.ReplaceAll(message, `[`, "")
-	message = strings.ReplaceAll(message, ` `, "")
-	message = strings.ReplaceAll(message, `　`, "")
-	message = strings.ReplaceAll(message, `、`, "")
-	message = strings.ReplaceAll(message, `。`, "")
-	message = strings.ReplaceAll(message, `(`, "")
-	message = strings.ReplaceAll(message, `)`, "")
-	message = strings.ReplaceAll(message, `）`, "")
-	message = strings.ReplaceAll(message, `（`, "")
-	message = strings.ReplaceAll(message, `》`, "")
-	message = strings.ReplaceAll(message, `《`, "")
-	message = strings.ReplaceAll(message, `×`, "")
-	message = strings.ReplaceAll(message, `・`, "")
-	message = strings.ReplaceAll(message, `”`, "")
-	message = strings.ReplaceAll(message, `“`, "")
-	message = strings.ReplaceAll(message, `’`, "")
-	message = strings.ReplaceAll(message, `‘`, "")
-	message = strings.ReplaceAll(message, `：`, "")
-	message = strings.ReplaceAll(message, `；`, "")
-	message = strings.ReplaceAll(message, `｝`, "")
-	message = strings.ReplaceAll(message, `｛`, "")
-	message = strings.ReplaceAll(message, `＜`, "")
-	message = strings.ReplaceAll(message, `＞`, "")
-	message = strings.ReplaceAll(message, `＿`, "")
-	message = strings.ReplaceAll(message, `＃`, "")
-	message = strings.ReplaceAll(message, `＄`, "")
-	message = strings.ReplaceAll(message, `％`, "")
-	message = strings.ReplaceAll(message, `＆`, "")
-	message = strings.ReplaceAll(message, `＝`, "")
-	message = strings.ReplaceAll(message, `～`, "")
-	message = strings.ReplaceAll(message, `＾`, "")
-	message = strings.ReplaceAll(message, `￥`, "")
-	message = strings.ReplaceAll(message, `｜`, "")
-	message = strings.ReplaceAll(message, `☆`, "")
-	message = strings.ReplaceAll(message, `…`, "")
-	return message
 }
 
 func CreateAiText(thema string, detail string, aiModel string) (string, error) {
@@ -132,7 +85,7 @@ func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 		return "", fmt.Errorf("OpenAiからのレスポンスに問題があります")
 	}
 	message := data.Choices[0].Message.Content
-	message = trimOtherChar(message)
+	message = utils.TrimOtherChar(message)
 
 	return message, nil
 }

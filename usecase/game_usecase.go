@@ -113,6 +113,27 @@ func selectBatch(game *model.Game, newBatches *[]model.Batch, currentBatches *[]
 			}
 		}
 	}
+
+	//技育展記念バッジ
+	if game.InputedThema == "技育展" {
+		batch := model.Batch{
+			UserId: game.UserId,
+			ModeId: game.ModeId,
+			Name:   "giikuten",
+		}
+		isExist := false
+		for _, currentBatch := range *currentBatches {
+			//すべて一致しない(現在取得していない)ときだけnewに追加
+			if currentBatch.Name == "giikuten" && currentBatch.UserId == game.UserId && currentBatch.ModeId == game.ModeId {
+				isExist = true
+				break
+			}
+		}
+		if !isExist {
+			*newBatches = append(*newBatches, batch)
+		}
+	}
+
 	return nil
 }
 
