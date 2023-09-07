@@ -119,12 +119,12 @@ func selectBatch(game *model.Game, newBatches *[]model.Batch, currentBatches *[]
 		batch := model.Batch{
 			UserId: game.UserId,
 			ModeId: game.ModeId,
-			Name:   "giikuten",
+			Name:   "geeketen",
 		}
 		isExist := false
 		for _, currentBatch := range *currentBatches {
 			//すべて一致しない(現在取得していない)ときだけnewに追加
-			if currentBatch.Name == "giikuten" && currentBatch.UserId == game.UserId && currentBatch.ModeId == game.ModeId {
+			if currentBatch.Name == batch.Name && currentBatch.UserId == game.UserId && currentBatch.ModeId == game.ModeId {
 				isExist = true
 				break
 			}
