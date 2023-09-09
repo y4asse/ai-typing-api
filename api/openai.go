@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
 
 	"ai-typing/model"
 	"ai-typing/utils"
@@ -91,22 +90,31 @@ func CreateAiText(thema string, detail string, aiModel string) (string, error) {
 }
 
 func Analyse(time string, typeKeyCount string, missTypeCount string, kpm string, missTypeKey string, score string, accuracy string) (string, error) {
+	aiModel := "gpt-4"
 	method := "POST"
 	OPEN_AI_URL := "https://api.openai.com/v1/chat/completions"
-	payload := strings.NewReader(
-		`{"model": "gpt-3.5-turbo",
-			"messages": [{
-				"role": "user",
-				"content": "これらはタイピングゲームの結果です.褒めて！あと改善点などがあれば教えて！入力時間` + time + `秒,入力キー数` + typeKeyCount + `, ミス入力数` + missTypeCount + `,KPM` + kpm + `,正確率` + accuracy + `%, 間違えた文字` + missTypeKey + `,スコア` + score + `"
-			}]
-		}`)
+	messages := []Messages{
+		{
+			Role:    "system",
+			Content: "あなたはタイピングゲームの分析を行うアシスタントです",
+		},
+		{
+			Role:    "user",
+			Content: "これらはタイピングゲームの結果です。分析して改善点とアドバイスと具体的な練習法を300文字程度で教えて！入力時間" + time + "秒,入力キー数" + typeKeyCount + ", ミス入力数" + missTypeCount + ",KPM" + kpm + ",正確率" + accuracy + "%, 間違えた文字" + missTypeKey,
+		},
+	}
+	reqBody := Body{
+		Model:    aiModel,
+		Messages: messages,
+	}
+
 	API_KEY := os.Getenv("API_KEY")
 	if API_KEY == "" {
 		fmt.Println("API_KEYを設定してください")
 		return "", fmt.Errorf("API_KEYを設定してください")
 	}
-
-	req, err := http.NewRequest(method, OPEN_AI_URL, payload)
+	jsonBody, _ := json.Marshal(reqBody)
+	req, err := http.NewRequest(method, OPEN_AI_URL, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		fmt.Println("リクエストの作成に失敗しました:", err)
 		return "", err
