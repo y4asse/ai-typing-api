@@ -119,7 +119,7 @@ func selectBatch(game *model.Game, newBatches *[]model.Batch, currentBatches *[]
 		batch := model.Batch{
 			UserId: game.UserId,
 			ModeId: game.ModeId,
-			Name:   "geeketen",
+			Name:   "geekten",
 		}
 		isExist := false
 		for _, currentBatch := range *currentBatches {
