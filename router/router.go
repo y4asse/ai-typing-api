@@ -14,7 +14,8 @@ func NewRouter(
 	gameController controller.IGameController,
 	createdTextController controller.ICreatedTextController,
 	likeController controller.IlikeController,
-	// userController controller.IUerController
+	userController controller.IUserController,
+	batchController controller.IBatchController,
 ) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -39,11 +40,12 @@ func NewRouter(
 	e.POST("/analyse", openaiController.Analyse)
 
 	//game
-	e.GET("/game", gameController.GetAllGame)
+	// e.GET("/game", gameController.GetAllGame)
 	e.PUT("/gameScore/:id", gameController.UpdateGameScore)
 	e.GET("/gameRanking", gameController.GetGameRanking)
 	e.POST("/latestGames", gameController.GetLatestGames)
 	e.GET("/totalGameCount", gameController.GetTotalGameCount)
+	e.GET("/games", gameController.GetAllByUserId, middleWare.Auth())
 
 	//createdText
 	e.GET("/createdText/:gameId", createdTextController.FindByGameId)
@@ -61,5 +63,11 @@ func NewRouter(
 	//user
 	e.GET("/gameHistory", gameController.GetGameHistory, middleWare.Auth())
 	e.POST("/game", gameController.CreateGame, middleWare.AuthAllowGuest())
+	e.GET("user", userController.GetUser, middleWare.Auth())
+	e.PUT("user", userController.Update, middleWare.Auth())
+
+	//batch
+	e.GET("/batches", batchController.GetAllByUserId, middleWare.Auth())
+
 	return e
 }

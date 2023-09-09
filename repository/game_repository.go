@@ -2,7 +2,6 @@ package repository
 
 import (
 	"ai-typing/model"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -10,14 +9,15 @@ import (
 type IGameRepository interface {
 	CreateGame(game *model.Game) error
 	GetGameRanking(games *[]model.Game, border int) error
-	GetGameHistory(game *[]model.Game, userId string) error
+	GetGameHistory(game *[]model.Game, userId string, limit int) error
 	GetAllGame(games *[]model.Game) error
 	GetLatestGames(games *[]model.Game, offset int) error
 	GetTotalGameCount() (int64, error)
-	UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error
+	UpdateGameScore(game *model.Game) error
 	FindOne(game *model.Game, gameId string) error
 	GetRankingCount(border int) (int64, error)
 	GetRankByGameId(border int, gameId string) (int64, error)
+	GetAllByUserId(game *[]model.Game, userId string) error
 }
 
 type gameRepository struct {
@@ -44,9 +44,9 @@ func (gameRepository *gameRepository) GetGameRanking(games *[]model.Game, border
 	return nil
 }
 
-func (gameRepository *gameRepository) GetGameHistory(games *[]model.Game, userId string) error {
+func (gameRepository *gameRepository) GetGameHistory(games *[]model.Game, userId string, limit int) error {
 	//gameからuser_id = userIdのデータを取得
-	if err := gameRepository.db.Where("user_id = ?", userId).Order("created_at desc").Find(games).Error; err != nil {
+	if err := gameRepository.db.Where("user_id = ?", userId).Order("created_at desc").Limit(limit).Find(games).Error; err != nil {
 		return err
 	}
 	return nil
@@ -74,10 +74,13 @@ func (gameRepository *gameRepository) GetTotalGameCount() (int64, error) {
 	return totalGameCount, nil
 }
 
-func (gameRepository *gameRepository) UpdateGameScore(score int, totalKeyCount int, totalTime int, TotalMissType int, gameId string) error {
-	result := gameRepository.db.Model(&model.Game{}).Where("id = ?", gameId).Updates(map[string]interface{}{"score": score, "total_key_count": totalKeyCount, "total_time": totalTime, "total_miss_type": TotalMissType})
-	if result.RowsAffected < 1 {
-		return fmt.Errorf("object does not exist")
+func (gameRepository *gameRepository) UpdateGameScore(game *model.Game) error {
+	if err := gameRepository.db.Model(&game).Updates(&game).Error; err != nil {
+		return err
+	}
+	//gameに変更後の値を格納
+	if err := gameRepository.db.Where("id = ?", game.ID).First(game).Error; err != nil {
+		return err
 	}
 	return nil
 }
@@ -109,4 +112,11 @@ func (gameRepository *gameRepository) GetRankByGameId(border int, gameId string)
 		}
 	}
 	return 0, nil
+}
+
+func (gameRepository *gameRepository) GetAllByUserId(game *[]model.Game, userId string) error {
+	if err := gameRepository.db.Where("user_id = ?", userId).Find(game).Error; err != nil {
+		return err
+	}
+	return nil
 }
