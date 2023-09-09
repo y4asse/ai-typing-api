@@ -20,6 +20,7 @@ type IGameController interface {
 	GetLatestGames(context echo.Context) error
 	GetTotalGameCount(context echo.Context) error
 	UpdateGameScore(context echo.Context) error
+	GetAllByUserId(context echo.Context) error
 }
 
 type gameController struct {
@@ -50,6 +51,9 @@ func (gameController *gameController) CreateGame(context echo.Context) error {
 		DisableRanking: gameBody.DisableRanking,
 		AiModel:        gameBody.AiModel,
 		Detail:         gameBody.Detail,
+		TotalKeyCount:  gameBody.TotalKeyCount,
+		TotalMissType:  gameBody.TotalMissType,
+		TotalTime:      gameBody.TotalTime,
 	}
 	for i := range gameBody.Text {
 		createdText := model.CreatedText{
@@ -87,7 +91,8 @@ func (gameController *gameController) GetGameHistory(context echo.Context) error
 	token := context.Get("token").(*auth.Token)
 	claims := token.Claims
 	uid, _ := claims["user_id"].(string)
-	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid)
+	limit, _ := strconv.Atoi(context.QueryParam("limit"))
+	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid, limit)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
@@ -133,25 +138,29 @@ func (gameController *gameController) GetTotalGameCount(context echo.Context) er
 }
 
 func (gameController *gameController) UpdateGameScore(context echo.Context) error {
-	gameId := context.Param("id")
-
 	game := model.Game{}
 	if err := context.Bind(&game); err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
-	score := game.Score
-	totalKeyCount := game.TotalKeyCount
-	totalTime := game.TotalTime
-	totalMissType := game.TotalMissType
-
-	count, rank, err := gameController.gameUseCase.UpdateGameScore(score, totalKeyCount, totalTime, totalMissType, gameId)
+	game.ID = context.Param("id")
+	updateGameResponse, err := gameController.gameUseCase.UpdateGameScore(&game)
 	if err != nil {
 		fmt.Println(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	res := model.Rank{}
-	res.Count = count
-	res.Rank = rank
-	return context.JSON(http.StatusOK, res)
+	return context.JSON(http.StatusOK, updateGameResponse)
+}
+
+func (gameController *gameController) GetAllByUserId(context echo.Context) error {
+	token := context.Get("token").(*auth.Token)
+	claims := token.Claims
+	uid, _ := claims["user_id"].(string)
+
+	gamesRes, err := gameController.gameUseCase.GetAllByUserId(uid)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, gamesRes)
 }

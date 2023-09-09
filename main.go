@@ -24,11 +24,15 @@ func main() {
 	gameRepository := repository.NewGameRepository(db)
 	createdTextRepository := repository.NewCreatedTextRepository(db)
 	likeRepository := repository.NewLikeRepository(db)
+	userRepository := repository.NewUserRepository(db)
+	batchRepository := repository.NewBatchRepository(db)
 
 	//usecase
-	gameUsecase := usecase.NewGameUsecase(gameRepository, createdTextRepository)
+	gameUsecase := usecase.NewGameUsecase(gameRepository, createdTextRepository, batchRepository)
 	createdTextUsecase := usecase.NewCreatedTextUsecase(createdTextRepository)
 	likeUsecase := usecase.NewLikeUsecase(likeRepository, gameRepository)
+	userusecase := usecase.NewUserUsecase(userRepository)
+	batchUsecase := usecase.NewBatchUsecase(batchRepository)
 
 	//controller
 	likeController := controller.NewLikeController(likeUsecase)
@@ -36,6 +40,16 @@ func main() {
 	gameController := controller.NewGameController(gameUsecase, createdTextUsecase)
 	openaiUsecase := usecase.NewOpenaiUsecase(aiTextValidator)
 	openaiController := controller.NewOpenaiController(openaiUsecase)
-	e := router.NewRouter(openaiController, gameController, createTextController, likeController)
+	userController := controller.NewUserController(userusecase)
+	batchController := controller.NewBatchController(batchUsecase)
+
+	e := router.NewRouter(
+		openaiController,
+		gameController,
+		createTextController,
+		likeController,
+		userController,
+		batchController,
+	)
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
