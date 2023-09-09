@@ -91,7 +91,12 @@ func (gameController *gameController) GetGameHistory(context echo.Context) error
 	token := context.Get("token").(*auth.Token)
 	claims := token.Claims
 	uid, _ := claims["user_id"].(string)
-	limit, _ := strconv.Atoi(context.QueryParam("limit"))
+	var limit int
+	if context.QueryParam("limit") == "" {
+		limit = 10
+	} else {
+		limit, _ = strconv.Atoi(context.QueryParam("limit"))
+	}
 	gamesRes, err := gameController.gameUseCase.GetGameHistory(uid, limit)
 	if err != nil {
 		fmt.Println(err.Error())
