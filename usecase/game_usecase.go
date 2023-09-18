@@ -83,15 +83,15 @@ func (gameUsecase *gameUsecase) GetTotalGameCount() (int64, error) {
 func selectBatch(game *model.Game, newBatches *[]model.Batch, currentBatches *[]model.Batch) error {
 	//スコアによるバッジの作成
 	mapList := map[string]int{
-		"earth":    1,
-		"moon":     500,
-		"mars":     1000,
-		"mercury":  1500,
-		"jupiter":  2000,
-		"venus":    2500,
-		"saturn":   3000,
-		"sun":      3500,
-		"universe": 4500,
+		"earth":   1,
+		"moon":    500,
+		"mars":    1000,
+		"mercury": 1500,
+		"jupiter": 2000,
+		"venus":   2500,
+		"saturn":  3000,
+		"sun":     3500,
+		// "universe": 4500,
 	}
 	for key, value := range mapList {
 		if game.Score >= value {
