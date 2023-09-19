@@ -21,6 +21,7 @@ type IGameController interface {
 	GetTotalGameCount(context echo.Context) error
 	UpdateGameScore(context echo.Context) error
 	GetAllByUserId(context echo.Context) error
+	GetDetail(context echo.Context) error
 }
 
 type gameController struct {
@@ -168,4 +169,17 @@ func (gameController *gameController) GetAllByUserId(context echo.Context) error
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return context.JSON(http.StatusOK, gamesRes)
+}
+
+func (gameController *gameController) GetDetail(context echo.Context) error {
+	token := context.Get("token").(*auth.Token)
+	claims := token.Claims
+	uid, _ := claims["user_id"].(string)
+	gameId := context.Param("gameId")
+	gameDetail, err := gameController.gameUseCase.GetDetail(gameId, uid)
+	if err != nil {
+		fmt.Println(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return context.JSON(http.StatusOK, gameDetail)
 }

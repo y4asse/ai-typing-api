@@ -40,3 +40,8 @@ type UpdateGameResponse struct {
 	Rank    int     `json:"rank"`
 	Batches []Batch `json:"batches"`
 }
+
+type GameDetail struct {
+	Game        Game          `json:"game"`
+	CreatedText []CreatedText `json:"created_text"`
+}
