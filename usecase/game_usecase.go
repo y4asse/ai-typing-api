@@ -15,6 +15,7 @@ type IGameUsecase interface {
 	GetTotalGameCount() (int64, error)
 	UpdateGameScore(game *model.Game) (model.UpdateGameResponse, error)
 	GetAllByUserId(userId string) ([]model.Game, error)
+	GetDetail(gameId string, userId string) (model.GameDetail, error)
 }
 
 type gameUsecase struct {
@@ -196,4 +197,28 @@ func (gameUsecase *gameUsecase) GetAllByUserId(userId string) ([]model.Game, err
 		return nil, err
 	}
 	return games, nil
+}
+
+func (gameUsecase *gameUsecase) GetDetail(gameId string, userId string) (model.GameDetail, error) {
+	game := model.Game{}
+	if err := gameUsecase.gameRepository.FindOne(&game, gameId); err != nil {
+		fmt.Println(err.Error())
+		return model.GameDetail{}, err
+	}
+	if game.UserId != userId {
+		err := fmt.Errorf("gameId:%s is not your game", gameId)
+		return model.GameDetail{}, err
+	}
+
+	createdTexts := []model.CreatedText{}
+	if err := gameUsecase.createdTextRepository.FindByGameId(&createdTexts, gameId); err != nil {
+		fmt.Println(err.Error())
+		return model.GameDetail{}, err
+	}
+
+	gameDetail := model.GameDetail{
+		Game:        game,
+		CreatedText: createdTexts,
+	}
+	return gameDetail, nil
 }
