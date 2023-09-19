@@ -62,6 +62,7 @@ func NewRouter(
 
 	//user
 	e.GET("/gameHistory", gameController.GetGameHistory, middleWare.Auth())
+	e.GET("/gameDetail/:gameId", gameController.GetDetail, middleWare.Auth())
 	e.POST("/game", gameController.CreateGame, middleWare.AuthAllowGuest())
 	e.GET("user", userController.GetUser, middleWare.Auth())
 	e.PUT("user", userController.Update, middleWare.Auth())
