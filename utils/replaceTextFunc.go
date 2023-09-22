@@ -84,6 +84,9 @@ func TrimNumKanji(trimedHiragana string) string {
 		"数":        "すう",
 		"\n":       "",
 		"わざはぐくみてん": "ぎいくてん",
+		"おにめつのは":   "きめつのやいば",
+		"ゼロ":       "ぜろ",
+		"すみじろう":    "たんじろう",
 	}
 	for before, after := range mapList {
 		trimedHiragana = strings.ReplaceAll(trimedHiragana, before, after)
